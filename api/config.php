@@ -14,6 +14,18 @@ if (!function_exists('env')) {
     }
 }
 
+// Base URL detection (supports override via BASE_URL env)
+if (!defined('BASE_URL')) {
+    $baseOverride = env('BASE_URL', null);
+    if ($baseOverride !== null) {
+        define('BASE_URL', rtrim($baseOverride, '/'));
+    } else {
+        $scriptName = $_SERVER['SCRIPT_NAME'] ?? '';
+        $base = rtrim(str_replace('\\', '/', dirname($scriptName)), '/');
+        define('BASE_URL', $base === '/' ? '' : $base);
+    }
+}
+
 // Support DATABASE_URL (mysql://user:pass@host:port/dbname)
 $dbUrl = env('DATABASE_URL');
 if ($dbUrl && stripos($dbUrl, 'mysql://') === 0) {
