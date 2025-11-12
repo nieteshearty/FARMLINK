@@ -40,11 +40,11 @@ if ($dbUrl && stripos($dbUrl, 'mysql://') === 0) {
 }
 
 // Database configuration
-if (!defined('DB_HOST')) define('DB_HOST', isset($db_host) ? $db_host : env('db.fr-pari1.bengt.wasmernet.com', default: env('MYSQLHOST', 'localhost')));
-if (!defined('DB_PORT')) define('DB_PORT', isset($db_port) ? $db_port : (int)env('10272', default: (int)env('MYSQLPORT', 3306)));
-if (!defined('DB_NAME')) define('DB_NAME', isset($db_name) ? $db_name : env('farmlink', default: env('MYSQLDATABASE', 'farmlink')));
-if (!defined('DB_USER')) define('DB_USER', isset($db_user) ? $db_user : env('4356d6577680800017f765d96a03', default: env('MYSQLUSER', 'root')));
-if (!defined('DB_PASS')) define('DB_PASS', isset($db_pass) ? $db_pass : env('06914356-d657-77e8-8000-d341270f0fbe', default: env('MYSQLPASSWORD', '')));
+if (!defined('DB_HOST')) define('DB_HOST', isset($db_host) ? $db_host : env('DB_HOST', env('MYSQLHOST', 'localhost')));
+if (!defined('DB_PORT')) define('DB_PORT', isset($db_port) ? $db_port : (int)env('DB_PORT', (int)env('MYSQLPORT', 3306)));
+if (!defined('DB_NAME')) define('DB_NAME', isset($db_name) ? $db_name : env('DB_NAME', env('MYSQLDATABASE', 'farmlink')));
+if (!defined('DB_USER')) define('DB_USER', isset($db_user) ? $db_user : env('DB_USER', env('MYSQLUSER', 'root')));
+if (!defined('DB_PASS')) define('DB_PASS', isset($db_pass) ? $db_pass : env('DB_PASS', env('MYSQLPASSWORD', '')));
 
 // Create database connection
 if (!function_exists('getDBConnection')) {
