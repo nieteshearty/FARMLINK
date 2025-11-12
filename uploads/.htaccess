@@ -1,0 +1,40 @@
+# Allow access to all image files in this directory
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    
+    # Allow direct access to files with these extensions
+    <FilesMatch "\.(jpg|jpeg|png|gif|svg|webp)$">
+        Order Allow,Deny
+        Allow from all
+        Require all granted
+    </FilesMatch>
+    
+    # Prevent directory listing
+    Options -Indexes
+    
+    # Enable CORS for images
+    <IfModule mod_headers.c>
+        Header set Access-Control-Allow-Origin "*"
+    </IfModule>
+    
+    # Security headers
+    <IfModule mod_headers.c>
+        Header always set X-Content-Type-Options "nosniff"
+        Header always set X-Frame-Options "SAMEORIGIN"
+        Header always set X-XSS-Protection "1; mode=block"
+    </IfModule>
+    
+    # Disable server signature
+    ServerSignature Off
+</IfModule>
+
+# PHP settings
+<IfModule mod_php7.c>
+    php_flag engine off
+</IfModule>
+
+# Deny access to all .htaccess files
+<filesMatch "\.(htaccess|htpasswd|ini|log|sh|sql|tpl|txt|xml)$">
+    Order Allow,Deny
+    Deny from all
+</filesMatch>

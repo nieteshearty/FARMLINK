@@ -1,0 +1,227 @@
+/**
+ * FARMLINK Logout Confirmation Modal Styles
+ * Beautiful and responsive logout confirmation dialog
+ */
+
+/* Modal Overlay */
+.logout-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10000;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+}
+
+.logout-modal-overlay.show {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* Modal Container */
+.logout-modal {
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    max-width: 420px;
+    width: 90%;
+    max-height: 90vh;
+    overflow: hidden;
+    transform: scale(0.8) translateY(20px);
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    border: 1px solid #e0e0e0;
+}
+
+.logout-modal-overlay.show .logout-modal {
+    transform: scale(1) translateY(0);
+}
+
+/* Modal Header */
+.logout-modal-header {
+    background: linear-gradient(135deg, #2E7D32, #4CAF50);
+    color: white;
+    padding: 24px;
+    text-align: center;
+    position: relative;
+}
+
+.logout-modal-header::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #FF6B35, #F7931E, #FFD23F);
+}
+
+.logout-icon {
+    font-size: 2.5rem;
+    margin-bottom: 12px;
+    display: block;
+    opacity: 0.9;
+}
+
+.logout-modal-header h3 {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+
+/* Modal Body */
+.logout-modal-body {
+    padding: 32px 24px;
+    text-align: center;
+}
+
+.logout-modal-body p {
+    margin: 0 0 12px 0;
+    font-size: 1.1rem;
+    color: #333;
+    line-height: 1.5;
+}
+
+.logout-subtitle {
+    font-size: 0.95rem !important;
+    color: #666 !important;
+    font-style: italic;
+}
+
+/* Modal Footer */
+.logout-modal-footer {
+    padding: 0 24px 24px 24px;
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+}
+
+/* Buttons */
+.logout-modal-footer button {
+    flex: 1;
+    padding: 14px 20px;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 48px;
+}
+
+.btn-cancel {
+    background: #f5f5f5;
+    color: #666;
+    border: 2px solid #ddd;
+}
+
+.btn-cancel:hover {
+    background: #e8e8e8;
+    color: #333;
+    border-color: #bbb;
+    transform: translateY(-1px);
+}
+
+.btn-confirm {
+    background: linear-gradient(135deg, #d32f2f, #f44336);
+    color: white;
+    border: 2px solid transparent;
+}
+
+.btn-confirm:hover {
+    background: linear-gradient(135deg, #b71c1c, #d32f2f);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(211, 47, 47, 0.4);
+}
+
+.btn-confirm:disabled,
+.btn-cancel:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* Responsive Design */
+@media (max-width: 480px) {
+    .logout-modal {
+        width: 95%;
+        margin: 20px;
+    }
+    
+    .logout-modal-header {
+        padding: 20px;
+    }
+    
+    .logout-icon {
+        font-size: 2rem;
+    }
+    
+    .logout-modal-header h3 {
+        font-size: 1.3rem;
+    }
+    
+    .logout-modal-body {
+        padding: 24px 20px;
+    }
+    
+    .logout-modal-footer {
+        padding: 0 20px 20px 20px;
+        flex-direction: column;
+    }
+    
+    .logout-modal-footer button {
+        flex: none;
+    }
+}
+
+/* Animation for loading state */
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.fa-spinner.fa-spin {
+    animation: spin 1s linear infinite;
+}
+
+/* Focus styles for accessibility */
+.logout-modal-footer button:focus {
+    outline: 3px solid #4CAF50;
+    outline-offset: 2px;
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+    .logout-modal {
+        border: 2px solid #000;
+    }
+    
+    .logout-modal-header {
+        background: #000;
+        color: #fff;
+    }
+    
+    .btn-cancel {
+        background: #fff;
+        color: #000;
+        border: 2px solid #000;
+    }
+    
+    .btn-confirm {
+        background: #000;
+        color: #fff;
+        border: 2px solid #000;
+    }
+}

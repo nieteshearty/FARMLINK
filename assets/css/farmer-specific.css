@@ -1,0 +1,262 @@
+/* 
+ * FARMLINK - Farmer Specific Styles
+ * Consolidated CSS from all farmer pages to eliminate internal styles
+ */
+
+/* ===================================================================
+ * SIDEBAR OVERRIDES - Consolidated from multiple files
+ * ===================================================================*/
+
+/* Default farmer sidebar - agricultural green */
+.farmer-page .sidebar {
+    background: #2E7D32 !important;
+    border-right: 3px solid #1B5E20;
+}
+
+/* Farmer dashboard specific - darker green */
+body[data-page="farmer-dashboard"] .sidebar {
+    background: #1B5E20 !important;
+}
+
+/* ===================================================================
+ * PROFILE UPLOAD STYLES - From farmer-profile.php
+ * ===================================================================*/
+
+.profile-upload {
+    display: flex;
+    gap: 20px;
+    margin: 15px 0;
+    align-items: center;
+}
+
+.profile-upload .current-image {
+    flex-shrink: 0;
+}
+
+.profile-upload .current-image img {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid #2E7D32;
+}
+
+.profile-upload .upload-controls {
+    flex: 1;
+}
+
+.profile-upload input[type="file"] {
+    margin-bottom: 10px;
+}
+
+/* ===================================================================
+ * MODAL STYLES - From manage-crops.php
+ * ===================================================================*/
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(5px);
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: 5% auto;
+    padding: 30px;
+    border: none;
+    border-radius: 15px;
+    width: 90%;
+    max-width: 600px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    animation: modalSlideIn 0.3s ease-out;
+}
+
+@keyframes modalSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: color 0.3s;
+}
+
+.close:hover,
+.close:focus {
+    color: #2E7D32;
+    text-decoration: none;
+}
+
+.modal h2 {
+    color: #2E7D32;
+    margin-bottom: 20px;
+    border-bottom: 2px solid #E8F5E8;
+    padding-bottom: 10px;
+}
+
+.modal .form-group {
+    margin-bottom: 20px;
+}
+
+.modal label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #2E7D32;
+}
+
+.modal input,
+.modal select,
+.modal textarea {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid #E8F5E8;
+    border-radius: 8px;
+    font-size: 14px;
+    transition: border-color 0.3s;
+}
+
+.modal input:focus,
+.modal select:focus,
+.modal textarea:focus {
+    outline: none;
+    border-color: #2E7D32;
+    box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.1);
+}
+
+.modal textarea {
+    resize: vertical;
+    min-height: 80px;
+}
+
+.modal .btn {
+    background: #2E7D32;
+    color: white;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: bold;
+    transition: background-color 0.3s;
+    margin-right: 10px;
+}
+
+.modal .btn:hover {
+    background: #1B5E20;
+}
+
+.modal .btn-secondary {
+    background: #6c757d;
+}
+
+.modal .btn-secondary:hover {
+    background: #545b62;
+}
+
+/* ===================================================================
+ * FARMER PAGE ENHANCEMENTS
+ * ===================================================================*/
+
+/* Enhanced farmer navigation */
+.farmer-page nav {
+    border-bottom: 3px solid #2E7D32;
+}
+
+.farmer-page .brand {
+    font-weight: bold;
+    color: #2E7D32;
+}
+
+/* Farmer-specific cards and content */
+.farmer-page .card {
+    border-left: 4px solid #2E7D32;
+}
+
+.farmer-page .stat-card {
+    background: linear-gradient(135deg, #E8F5E8 0%, #C8E6C9 100%);
+}
+
+.farmer-page .btn-primary {
+    background: #2E7D32;
+    border-color: #2E7D32;
+}
+
+.farmer-page .btn-primary:hover {
+    background: #1B5E20;
+    border-color: #1B5E20;
+}
+
+/* ===================================================================
+ * RESPONSIVE DESIGN
+ * ===================================================================*/
+
+@media (max-width: 768px) {
+    .profile-upload {
+        flex-direction: column;
+        gap: 15px;
+        text-align: center;
+    }
+    
+    .modal-content {
+        margin: 10% auto;
+        width: 95%;
+        padding: 20px;
+    }
+    
+    .farmer-page .sidebar {
+        width: 100%;
+        height: auto;
+        position: relative;
+    }
+}
+
+@media (max-width: 480px) {
+    .modal-content {
+        margin: 5% auto;
+        padding: 15px;
+    }
+    
+    .modal h2 {
+        font-size: 1.5em;
+    }
+    
+    .profile-upload .current-image img {
+        width: 60px;
+        height: 60px;
+    }
+}
+
+/* ===================================================================
+ * PRINT STYLES
+ * ===================================================================*/
+
+@media print {
+    .farmer-page .sidebar {
+        display: none;
+    }
+    
+    .modal {
+        display: none !important;
+    }
+    
+    .farmer-page nav {
+        border-bottom: 1px solid #000;
+    }
+}

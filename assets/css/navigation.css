@@ -1,0 +1,346 @@
+/* Navigation Styles */
+.menu-toggle {
+    background: none;
+    border: none;
+    font-size: 18px;
+    color: #333;
+    cursor: pointer;
+    padding: 8px;
+    margin-right: 15px;
+    border-radius: 4px;
+    transition: background-color 0.2s;
+}
+
+.menu-toggle:hover {
+    background-color: #f5f5f5;
+}
+
+.nav-logo {
+    height: 40px !important;
+    width: 40px !important;
+    margin-right: 15px;
+    border-radius: 50% !important;
+    object-fit: cover !important;
+    display: block !important;
+    flex-shrink: 0;
+    border: 2px solid #4CAF50 !important;
+    background: white !important;
+    overflow: hidden !important;
+}
+
+.nav-left {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+    gap: 12px;
+}
+
+.nav-title {
+    font-size: 1.3em;
+    font-weight: 600;
+    color: #333;
+    margin: 0;
+    white-space: nowrap;
+}
+
+.brand {
+    font-weight: bold;
+    color: #4CAF50;
+    font-size: 1.1em;
+}
+
+nav {
+    background: white;
+    padding: 12px 20px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1040;
+    min-height: 60px;
+    transition: padding-left 0.3s ease;
+}
+
+nav span {
+    font-size: 1.2em;
+    font-weight: 600;
+    color: #333;
+}
+
+.nav-right {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    flex-shrink: 0;
+}
+
+.user-menu {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.welcome {
+    color: #666;
+    font-size: 0.9em;
+}
+
+.avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #4CAF50;
+}
+
+/* When sidebar is active, adjust nav padding */
+.sidebar.active ~ nav,
+nav.sidebar-active {
+    padding-left: 270px;
+}
+
+/* Sidebar Toggle Functionality */
+.sidebar {
+    position: fixed;
+    left: -250px;
+    top: 0;
+    width: 250px;
+    height: 100vh;
+    background: #2c5530;
+    transition: left 0.3s ease;
+    z-index: 1000;
+    padding-top: 80px;
+}
+
+.sidebar.active {
+    left: 0;
+}
+
+.sidebar a {
+    display: block;
+    color: white;
+    padding: 15px 20px;
+    text-decoration: none;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    transition: background-color 0.2s;
+}
+
+.sidebar a:hover,
+.sidebar a.active {
+    background-color: rgba(255,255,255,0.1);
+}
+
+/* Overlay for mobile */
+.sidebar-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    z-index: 999;
+    display: none;
+}
+
+.sidebar-overlay.active {
+    display: block;
+}
+
+/* Debug styles to ensure logo is visible */
+.nav-logo:not([src]) {
+    background: #f0f0f0;
+    border: 2px dashed #ccc;
+}
+
+.nav-logo[src=""] {
+    background: #f0f0f0;
+    border: 2px dashed #ccc;
+}
+
+/* Responsive adjustments */
+@media (max-width: 575px) {
+    nav {
+        padding: 8px 15px;
+        min-height: 50px;
+    }
+    
+    .nav-logo {
+        height: 30px;
+        width: 30px;
+        margin-right: 10px;
+    }
+    
+    .nav-title {
+        font-size: 0.9em;
+    }
+    
+    .welcome {
+        display: none;
+    }
+    
+    .avatar {
+        width: 26px;
+        height: 26px;
+    }
+    
+    .menu-toggle {
+        padding: 6px;
+        font-size: 16px;
+        margin-right: 10px;
+    }
+    
+    .nav-right {
+        gap: 10px;
+    }
+}
+
+@media (min-width: 576px) and (max-width: 767px) {
+    nav {
+        padding: 10px 18px;
+        min-height: 55px;
+    }
+    
+    .nav-logo {
+        height: 35px;
+        width: 35px;
+        margin-right: 15px;
+    }
+    
+    .nav-title {
+        font-size: 1.1em;
+    }
+    
+    .welcome {
+        display: none;
+    }
+    
+    .avatar {
+        width: 30px;
+        height: 30px;
+    }
+}
+
+@media (min-width: 769px) {
+    /* Show hamburger menu on desktop too */
+    .menu-toggle {
+        display: block;
+    }
+}
+
+@media (max-width: 768px) {
+    .nav-title {
+        font-size: 1.1em;
+    }
+    
+    .welcome {
+        display: none;
+    }
+}
+
+/* iPhone 12, 12 Pro, and similar modern phones (390px width) */
+@media only screen and (max-width: 430px) and (-webkit-device-pixel-ratio: 3) {
+    nav {
+        padding: 10px 15px;
+        min-height: 56px;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 1100;
+        background: white;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .nav-left {
+        display: flex;
+        align-items: center;
+        flex-shrink: 0;
+        gap: 8px;
+    }
+    
+    .menu-toggle {
+        padding: 8px;
+        font-size: 18px;
+        margin-right: 8px;
+        min-width: 36px;
+        min-height: 36px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .nav-logo {
+        height: 32px;
+        width: 32px;
+        margin-right: 8px;
+        flex-shrink: 0;
+    }
+    
+    .nav-title {
+        font-size: 0.95em;
+        font-weight: 600;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 180px;
+    }
+    
+    .nav-right {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-shrink: 0;
+    }
+    
+    .welcome {
+        display: none;
+    }
+    
+    .avatar {
+        width: 28px;
+        height: 28px;
+        flex-shrink: 0;
+    }
+    
+    .user-menu {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+}
+
+/* iPhone 12 Pro Max and larger phones (428px width) */
+@media only screen and (max-width: 480px) and (min-width: 428px) {
+    nav {
+        padding: 12px 18px;
+        min-height: 58px;
+    }
+    
+    .nav-logo {
+        height: 34px;
+        width: 34px;
+        margin-right: 10px;
+    }
+    
+    .nav-title {
+        font-size: 1em;
+        max-width: 200px;
+    }
+    
+    .menu-toggle {
+        min-width: 38px;
+        min-height: 38px;
+    }
+    
+    .avatar {
+        width: 30px;
+        height: 30px;
+    }
+}
