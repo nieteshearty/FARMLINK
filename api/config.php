@@ -30,21 +30,22 @@ if (!defined('BASE_URL')) {
 $dbUrl = env('DATABASE_URL');
 if ($dbUrl && stripos($dbUrl, 'mysql://') === 0) {
     $parts = parse_url($dbUrl);
-    if ($parts) {
+    // Only respect DATABASE_URL if it includes a password; otherwise prefer MYSQL* env vars (e.g., on Wasmer)
+    if ($parts && isset($parts['pass'])) {
         $db_host = $parts['host'] ?? 'localhost';
         $db_port = isset($parts['port']) ? (int)$parts['port'] : 3306;
         $db_user = $parts['user'] ?? 'root';
-        $db_pass = $parts['pass'] ?? '';
+        $db_pass = $parts['pass'];
         $db_name = isset($parts['path']) ? ltrim($parts['path'], '/') : 'farmlink';
     }
 }
 
 // Database configuration
-if (!defined('DB_HOST')) define('DB_HOST', isset($db_host) ? $db_host : env('DB_HOST', env('MYSQLHOST', 'localhost')));
-if (!defined('DB_PORT')) define('DB_PORT', isset($db_port) ? $db_port : (int)env('DB_PORT', (int)env('MYSQLPORT', 3306)));
+if (!defined('DB_HOST')) define('DB_HOST', isset($db_host) ? $db_host : env('DB_HOST', env('MYSQLHOST', 'db.fr-pari1.bengt.wasmernet.com')));
+if (!defined('DB_PORT')) define('DB_PORT', isset($db_port) ? $db_port : (int)env('DB_PORT', (int)env('MYSQLPORT', 10272)));
 if (!defined('DB_NAME')) define('DB_NAME', isset($db_name) ? $db_name : env('DB_NAME', env('MYSQLDATABASE', 'farmlink')));
-if (!defined('DB_USER')) define('DB_USER', isset($db_user) ? $db_user : env('DB_USER', env('MYSQLUSER', 'root')));
-if (!defined('DB_PASS')) define('DB_PASS', isset($db_pass) ? $db_pass : env('DB_PASS', env('MYSQLPASSWORD', '')));
+if (!defined('DB_USER')) define('DB_USER', isset($db_user) ? $db_user : env('DB_USER', env('MYSQLUSER', '4356d6577680800017f765d96a03')));
+if (!defined('DB_PASS')) define('DB_PASS', isset($db_pass) ? $db_pass : env('DB_PASS', env('MYSQLPASSWORD', '06914356-d657-77e8-8000-d341270f0fbe')));
 
 // Create database connection
 if (!function_exists('getDBConnection')) {
