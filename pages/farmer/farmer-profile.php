@@ -29,7 +29,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Handle profile picture upload
     $profilePicture = $user['profile_picture']; // Keep existing if no new upload
     if (isset($_FILES['profile_picture']) && $_FILES['profile_picture']['error'] === UPLOAD_ERR_OK) {
-        $uploadDir = $_SERVER['DOCUMENT_ROOT'] . '/FARMLINK/uploads/profiles/';
+        $uploadDir = $_SERVER['DOCUMENT_ROOT'] . '/uploads/profiles/';
         if (!is_dir($uploadDir)) {
             mkdir($uploadDir, 0755, true);
         }
@@ -40,12 +40,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (in_array($fileExtension, $allowedExtensions)) {
             $fileName = uniqid() . '.' . $fileExtension;
             $uploadPath = $uploadDir . $fileName;
-            $relativePath = '/FARMLINK/uploads/profiles/' . $fileName;
+            $relativePath = 'uploads/profiles/' . $fileName;
             
             if (move_uploaded_file($_FILES['profile_picture']['tmp_name'], $uploadPath)) {
                 // Delete old profile picture if exists
-                if ($user['profile_picture'] && file_exists($_SERVER['DOCUMENT_ROOT'] . $user['profile_picture'])) {
-                    unlink($_SERVER['DOCUMENT_ROOT'] . $user['profile_picture']);
+                if ($user['profile_picture']) {
+                    $oldFs = $_SERVER['DOCUMENT_ROOT'] . (str_starts_with($user['profile_picture'], '/') ? $user['profile_picture'] : ('/' . $user['profile_picture']));
+                    if (file_exists($oldFs)) unlink($oldFs);
                 }
                 $profilePicture = $relativePath;
             }
@@ -104,10 +105,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
   <meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
   <title>FarmLink • Profile</title>
-  <link rel="icon" type="image/png" href="/FARMLINK/assets/img/farmlink.png">
-  <link rel="stylesheet" href="/FARMLINK/style.css">
-  <link rel="stylesheet" href="/FARMLINK/assets/css/farmer.css">
-  <link rel="stylesheet" href="/FARMLINK/assets/css/logout-confirmation.css">
+  <link rel="icon" type="image/png" href="<?= BASE_URL ?>/assets/img/farmlink.png">
+  <link rel="stylesheet" href="<?= BASE_URL ?>/style.css">
+  <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/farmer.css">
+  <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/logout-confirmation.css">
   
   <!-- Leaflet CSS -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
@@ -122,7 +123,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <body data-page="farmer-profile">
   <nav>
     <div class="nav-left">
-      <a href="farmer-dashboard.php"><img src="/FARMLINK/assets/img/farmlink.png" alt="FARMLINK" class="logo"></a>
+      <a href="farmer-dashboard.php"><img src="<?= BASE_URL ?>/assets/img/farmlink.png" alt="FARMLINK" class="logo"></a>
       <span class="brand">FARMLINK - FARMER</span>
     </div>
     <span>Profile</span>
@@ -134,7 +135,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <a href="farmer-orders.php">Orders</a>
     <a href="farmer-delivery-zones.php">Delivery Zones</a>
     <a href="farmer-profile.php" class="active">Profile</a>
-    <a href="/FARMLINK/pages/auth/logout.php">Logout</a>
+    <a href="<?= BASE_URL ?>/pages/auth/logout.php">Logout</a>
   </div>
 
   <main class="main">
@@ -158,19 +159,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
               <?php 
                 // Handle different path formats for existing profile pictures
                 $profilePicPath = $user['profile_picture'];
-                
-                // If the path doesn't start with /, it's likely just a filename
-                if (strpos($profilePicPath, '/') !== 0) {
-                  $profilePicPath = '/FARMLINK/uploads/profiles/' . $profilePicPath;
-                }
-                
-                // If it's already a full path starting with /FARMLINK/, use as is
-                // Otherwise, ensure it has the correct prefix
-                if (strpos($profilePicPath, '/FARMLINK/') !== 0) {
-                  $profilePicPath = '/FARMLINK' . ltrim($profilePicPath, '/');
+                if (strpos($profilePicPath, 'http') === 0) {
+                  // use as is
+                } elseif (strpos($profilePicPath, '/') === 0) {
+                  $profilePicPath = BASE_URL . $profilePicPath;
+                } else {
+                  $profilePicPath = BASE_URL . '/uploads/profiles/' . $profilePicPath;
                 }
               ?>
-              <img src="<?= htmlspecialchars($profilePicPath) ?>" alt="Profile Picture" onerror="this.src='/FARMLINK/assets/img/default-avatar.png';" class="current-pic">
+              <img src="<?= htmlspecialchars($profilePicPath) ?>" alt="Profile Picture" onerror="this.src='<?= BASE_URL ?>/assets/img/default-avatar.png';" class="current-pic">
             <?php else: ?>
               <div class="profile-pic-default current-pic">
                 <?= strtoupper(substr($user['username'], 0, 1)) ?>

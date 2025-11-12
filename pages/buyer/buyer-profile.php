@@ -21,7 +21,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     
     // Handle profile picture upload
     if (isset($_FILES['profile_picture']) && $_FILES['profile_picture']['error'] === UPLOAD_ERR_OK) {
-        $uploadDir = $_SERVER['DOCUMENT_ROOT'] . '/FARMLINK/uploads/profiles/';
+        $uploadDir = $_SERVER['DOCUMENT_ROOT'] . '/uploads/profiles/';
         
         // Ensure upload directory exists and is writable
         if (!is_dir($uploadDir)) {
@@ -111,15 +111,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
   <meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
   <title>FarmLink • Profile</title>
-  <link rel="icon" type="image/png" href="/FARMLINK/assets/img/farmlink.png">
-  <link rel="stylesheet" href="/FARMLINK/style.css">
-  <link rel="stylesheet" href="/FARMLINK/assets/css/buyer.css">
-  <link rel="stylesheet" href="/FARMLINK/assets/css/logout-confirmation.css">
+  <link rel="icon" type="image/png" href="<?= BASE_URL ?>/assets/img/farmlink.png">
+  <link rel="stylesheet" href="<?= BASE_URL ?>/style.css">
+  <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/buyer.css">
+  <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/logout-confirmation.css">
 </head>
 <body data-page="buyer-profile">
   <nav>
     <div class="nav-left">
-      <a href="buyer-dashboard.php"><img src="/FARMLINK/assets/img/farmlink.png" alt="FARMLINK" class="logo"></a>
+      <a href="buyer-dashboard.php"><img src="<?= BASE_URL ?>/assets/img/farmlink.png" alt="FARMLINK" class="logo"></a>
       <span class="brand">FARMLINK - BUYER</span>
     </div>
     <span>Profile</span>
@@ -131,7 +131,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <a href="buyer-cart.php">Shopping Cart</a>
     <a href="buyer-orders.php">My Orders</a>
     <a href="buyer-profile.php" class="active">Profile</a>
-    <a href="/FARMLINK/pages/auth/logout.php">Logout</a>
+    <a href="<?= BASE_URL ?>/pages/auth/logout.php">Logout</a>
   </div>
 
   <main class="main">
@@ -155,15 +155,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $profilePic = $user['profile_picture'];
             if (!empty($profilePic)): 
                 // If it's a full path, use it directly, otherwise construct the path
-                if (strpos($profilePic, '/') === 0) {
+                if (strpos($profilePic, 'http') === 0) {
                     $imgSrc = $profilePic;
+                } elseif (strpos($profilePic, '/') === 0) {
+                    $imgSrc = BASE_URL . $profilePic;
                 } else {
-                    $imgSrc = '/FARMLINK/uploads/profiles/' . $profilePic;
+                    $imgSrc = BASE_URL . '/uploads/profiles/' . $profilePic;
                 }
             ?>
               <img src="<?= htmlspecialchars($imgSrc) ?>" 
                    alt="Profile Picture" 
-                   onerror="this.onerror=null; this.src='/FARMLINK/assets/img/default-avatar.png';" 
+                   onerror="this.onerror=null; this.src='<?= BASE_URL ?>/assets/img/default-avatar.png';" 
                    class="current-pic">
             <?php else: ?>
               <div class="profile-pic-default current-pic">
@@ -349,6 +351,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 </div>
 
-  <script src="/FARMLINK/assets/js/logout-confirmation.js"></script>
+  <script src="<?= BASE_URL ?>/assets/js/logout-confirmation.js"></script>
 </body>
 </html>

@@ -38,8 +38,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $uploadPath = $uploadDir . $fileName;
                 
                 if (move_uploaded_file($_FILES['product_image']['tmp_name'], $uploadPath)) {
-                    // Store the path with /FARMLINK/uploads/products/ prefix
-                    $productImage = '/FARMLINK/uploads/products/' . $fileName;
+                    // Store as relative path to work with BASE_URL
+                    $productImage = 'uploads/products/' . $fileName;
                 }
             }
             
@@ -76,7 +76,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             // Handle product image upload
             if (isset($_FILES['product_image']) && $_FILES['product_image']['error'] === UPLOAD_ERR_OK) {
                 // Create uploads directory if it doesn't exist
-                $uploadDir = $_SERVER['DOCUMENT_ROOT'] . '/FARMLINK/uploads/products/';
+                $uploadDir = $_SERVER['DOCUMENT_ROOT'] . '/uploads/products/';
                 if (!is_dir($uploadDir)) {
                     mkdir($uploadDir, 0755, true);
                 }
@@ -90,11 +90,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     
                     if (move_uploaded_file($_FILES['product_image']['tmp_name'], $uploadPath)) {
                         // Delete old image if exists
-                        if ($productImage && file_exists($_SERVER['DOCUMENT_ROOT'] . $productImage)) {
-                            unlink($_SERVER['DOCUMENT_ROOT'] . $productImage);
+                        if ($productImage) {
+                            $oldFs = $_SERVER['DOCUMENT_ROOT'] . (str_starts_with($productImage, '/') ? $productImage : ('/' . $productImage));
+                            if (file_exists($oldFs)) {
+                                unlink($oldFs);
+                            }
                         }
-                        // Store the path with /FARMLINK/uploads/products/ prefix
-                        $productImage = '/FARMLINK/uploads/products/' . $fileName;
+                        // Store as relative path
+                        $productImage = 'uploads/products/' . $fileName;
                     }
                 }
             }
@@ -158,15 +161,15 @@ if (isset($_GET['edit']) && $_GET['edit']) {
 <head>
   <meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
   <title>FarmLink • Manage Products</title>
-  <link rel="icon" type="image/png" href="/FARMLINK/assets/img/farmlink.png">
-  <link rel="stylesheet" href="/FARMLINK/style.css">
-  <link rel="stylesheet" href="/FARMLINK/assets/css/farmer.css">
-  <link rel="stylesheet" href="/FARMLINK/assets/css/logout-confirmation.css">
+  <link rel="icon" type="image/png" href="<?= BASE_URL ?>/assets/img/farmlink.png">
+  <link rel="stylesheet" href="<?= BASE_URL ?>/style.css">
+  <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/farmer.css">
+  <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/logout-confirmation.css">
 </head>
 <body data-page="farmer-products">
   <nav>
     <div class="nav-left">
-      <a href="farmer-dashboard.php"><img src="/FARMLINK/assets/img/farmlink.png" alt="FARMLINK Logo" class="logo"></a>
+      <a href="farmer-dashboard.php"><img src="<?= BASE_URL ?>/assets/img/farmlink.png" alt="FARMLINK Logo" class="logo"></a>
       <span class="brand">FARMLINK - FARMER</span>
     </div>
     <span>Manage Products</span>
@@ -178,7 +181,7 @@ if (isset($_GET['edit']) && $_GET['edit']) {
     <a href="farmer-orders.php">Orders</a>
     <a href="farmer-delivery-zones.php">Delivery Zones</a>
     <a href="farmer-profile.php">Profile</a>
-    <a href="/FARMLINK/pages/auth/logout.php">Logout</a>
+    <a href="<?= BASE_URL ?>/pages/auth/logout.php">Logout</a>
   </div>
 
   <main class="main">
@@ -215,14 +218,14 @@ if (isset($_GET['edit']) && $_GET['edit']) {
                 
                 if (strpos($imageValue, 'http') === 0) {
                     $fullImageUrl = $imageValue;
-                } elseif (strpos($imageValue, '/FARMLINK/') === 0) {
+                } elseif (strpos($imageValue, BASE_URL . '/') === 0 || strpos($imageValue, '/FARMLINK/') === 0) {
                     $fullImageUrl = $imageValue;
                 } elseif (strpos($imageValue, 'uploads/products/') === 0) {
-                    $fullImageUrl = '/FARMLINK/' . $imageValue;
+                    $fullImageUrl = BASE_URL . '/' . $imageValue;
                 } elseif (strpos($imageValue, '/') === 0) {
-                    $fullImageUrl = '/FARMLINK' . $imageValue;
+                    $fullImageUrl = BASE_URL . $imageValue;
                 } else {
-                    $fullImageUrl = '/FARMLINK/uploads/products/' . basename($imageValue);
+                    $fullImageUrl = BASE_URL . '/uploads/products/' . basename($imageValue);
                 }
               ?>
               <img src="<?= htmlspecialchars($fullImageUrl) ?>" 
@@ -315,14 +318,14 @@ if (isset($_GET['edit']) && $_GET['edit']) {
                         
                         if (strpos($imageValue, 'http') === 0) {
                             $fullImageUrl = $imageValue;
-                        } elseif (strpos($imageValue, '/FARMLINK/') === 0) {
+                        } elseif (strpos($imageValue, BASE_URL . '/') === 0 || strpos($imageValue, '/FARMLINK/') === 0) {
                             $fullImageUrl = $imageValue;
                         } elseif (strpos($imageValue, 'uploads/products/') === 0) {
-                            $fullImageUrl = '/FARMLINK/' . $imageValue;
+                            $fullImageUrl = BASE_URL . '/' . $imageValue;
                         } elseif (strpos($imageValue, '/') === 0) {
-                            $fullImageUrl = '/FARMLINK' . $imageValue;
+                            $fullImageUrl = BASE_URL . $imageValue;
                         } else {
-                            $fullImageUrl = '/FARMLINK/uploads/products/' . basename($imageValue);
+                            $fullImageUrl = BASE_URL . '/uploads/products/' . basename($imageValue);
                         }
                       ?>
                       <img src="<?= htmlspecialchars($fullImageUrl) ?>" 
@@ -577,6 +580,6 @@ if (isset($_GET['edit']) && $_GET['edit']) {
       <?php endif; ?>
     });
   </script>
-  <script src="/FARMLINK/assets/js/logout-confirmation.js"></script>
+  <script src="<?= BASE_URL ?>/assets/js/logout-confirmation.js"></script>
 </body>
 </html>
