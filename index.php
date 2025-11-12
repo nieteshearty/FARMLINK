@@ -760,17 +760,17 @@ if (SessionManager::isLoggedIn()) {
                     if (!empty($products)) {
                         foreach ($products as $product) {
                             // Handle image path
-                            $imagePath = '/FARMLINK/assets/img/product-placeholder.svg';
+                            $imagePath = BASE_URL . '/assets/img/product-placeholder.svg';
                             if (!empty($product['image'])) {
                                 $image = $product['image'];
-                                if (strpos($image, '/uploads/') === 0) {
-                                    $imagePath = '/FARMLINK' . $image;
-                                } elseif (strpos($image, 'uploads/') === 0) {
-                                    $imagePath = '/FARMLINK/' . $image;
-                                } elseif (strpos($image, '/FARMLINK/') === 0) {
+                                if (preg_match('#^https?://#', $image)) {
                                     $imagePath = $image;
+                                } elseif (strpos($image, '/') === 0) {
+                                    $imagePath = BASE_URL . $image;
+                                } elseif (strpos($image, 'uploads/') === 0) {
+                                    $imagePath = BASE_URL . '/' . $image;
                                 } else {
-                                    $imagePath = '/FARMLINK/uploads/products/' . $image;
+                                    $imagePath = BASE_URL . '/uploads/products/' . $image;
                                 }
                             }
                             
@@ -1401,7 +1401,7 @@ if (SessionManager::isLoggedIn()) {
                         </button>
                     </div>
                     <p style="color: #999; font-size: 0.9rem; margin-top: 20px;">
-                        Already have an account? <a href="/FARMLINK/pages/auth/login.php" style="color: #2E7D32; text-decoration: none; font-weight: bold;">Login here</a>
+                        Already have an account? <a href="<?= BASE_URL ?>/pages/auth/login.php" style="color: #2E7D32; text-decoration: none; font-weight: bold;">Login here</a>
                     </p>
                 </div>
             `;
@@ -1417,7 +1417,7 @@ if (SessionManager::isLoggedIn()) {
         }
         
         function goToSignup(productName) {
-            window.location.href = '/FARMLINK/pages/auth/signup.php' + (productName ? '?product=' + encodeURIComponent(productName) : '');
+            window.location.href = '<?= BASE_URL ?>/pages/auth/signup.php' + (productName ? '?product=' + encodeURIComponent(productName) : '');
         }
         
         function closeModal() {
@@ -1444,7 +1444,7 @@ if (SessionManager::isLoggedIn()) {
                 hero.classList.add('fallback');
             };
             
-            img.src = '/FARMLINK/assets/img/rice-field-bg.jpg';
+            img.src = '<?= BASE_URL ?>/assets/img/wheat-field-bg.jpg';
         });
 
         // Smooth scrolling for navigation links
@@ -1479,7 +1479,7 @@ if (SessionManager::isLoggedIn()) {
             const phone = form.querySelector('input[name="phone"]').value;
             
             // Build URL with pre-filled data
-            let registerUrl = '/FARMLINK/pages/auth/signup.php';
+            let registerUrl = '<?= BASE_URL ?>/pages/auth/signup.php';
             const params = new URLSearchParams();
             
             if (name) params.append('name', name);

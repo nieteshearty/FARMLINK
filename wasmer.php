@@ -12,5 +12,18 @@ if ($action === 'liveconfig') {
     ]);
     exit;
 }
+
+if ($action === 'dbinfo') {
+    $maskedPass = strlen(DB_PASS) > 0 ? str_repeat('*', max(4, strlen(DB_PASS))) : '';
+    echo json_encode([
+        'ok' => true,
+        'host' => DB_HOST,
+        'port' => DB_PORT,
+        'name' => DB_NAME,
+        'user' => DB_USER,
+        'pass' => $maskedPass,
+    ]);
+    exit;
+}
 http_response_code(404);
 echo json_encode(['ok' => false, 'error' => 'not_found']);
