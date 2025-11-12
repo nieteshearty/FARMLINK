@@ -4,12 +4,35 @@ if (!defined('FORCE_HTTPS')) define('FORCE_HTTPS', false); // Set to true in pro
 if (!defined('SECURE_COOKIES')) define('SECURE_COOKIES', false); // Set to true with HTTPS
 if (!defined('SESSION_TIMEOUT')) define('SESSION_TIMEOUT', 3600); // 1 hour
 
+// Helper to read env from multiple sources
+if (!function_exists('env')) {
+    function env($key, $default = null) {
+        $val = getenv($key);
+        if ($val === false && isset($_ENV[$key])) $val = $_ENV[$key];
+        if ($val === false && isset($_SERVER[$key])) $val = $_SERVER[$key];
+        return ($val === false || $val === null || $val === '') ? $default : $val;
+    }
+}
+
+// Support DATABASE_URL (mysql://user:pass@host:port/dbname)
+$dbUrl = env('DATABASE_URL');
+if ($dbUrl && stripos($dbUrl, 'mysql://') === 0) {
+    $parts = parse_url($dbUrl);
+    if ($parts) {
+        $db_host = $parts['host'] ?? 'localhost';
+        $db_port = isset($parts['port']) ? (int)$parts['port'] : 3306;
+        $db_user = $parts['user'] ?? 'root';
+        $db_pass = $parts['pass'] ?? '';
+        $db_name = isset($parts['path']) ? ltrim($parts['path'], '/') : 'farmlink';
+    }
+}
+
 // Database configuration
-if (!defined('DB_HOST')) define('DB_HOST', getenv('DB_HOST') ?: 'localhost');
-if (!defined('DB_PORT')) define('DB_PORT', getenv('DB_PORT') ?: 3306);
-if (!defined('DB_NAME')) define('DB_NAME', getenv('DB_NAME') ?: 'farmlink');
-if (!defined('DB_USER')) define('DB_USER', getenv('DB_USER') ?: 'root');
-if (!defined('DB_PASS')) define('DB_PASS', getenv('DB_PASS') ?: '');
+if (!defined('DB_HOST')) define('DB_HOST', isset($db_host) ? $db_host : env('DB_HOST', 'localhost'));
+if (!defined('DB_PORT')) define('DB_PORT', isset($db_port) ? $db_port : (int)env('DB_PORT', 3306));
+if (!defined('DB_NAME')) define('DB_NAME', isset($db_name) ? $db_name : env('DB_NAME', 'farmlink'));
+if (!defined('DB_USER')) define('DB_USER', isset($db_user) ? $db_user : env('DB_USER', 'root'));
+if (!defined('DB_PASS')) define('DB_PASS', isset($db_pass) ? $db_pass : env('DB_PASS', ''));
 
 // Create database connection
 if (!function_exists('getDBConnection')) {
