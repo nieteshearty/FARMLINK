@@ -27,16 +27,16 @@ if (SessionManager::isLoggedIn()) {
     $user = SessionManager::getUser();
     switch ($user['role']) {
         case 'super_admin':
-            header('Location: /FARMLINK/pages/superadmin/dashboard.php');
+            header('Location: ' . BASE_URL . '/pages/superadmin/dashboard.php');
             break;
         case 'farmer':
-            header('Location: /FARMLINK/pages/farmer/farmer-dashboard.php');
+            header('Location: ' . BASE_URL . '/pages/farmer/farmer-dashboard.php');
             break;
         case 'buyer':
-            header('Location: /FARMLINK/pages/buyer/buyer-dashboard.php');
+            header('Location: ' . BASE_URL . '/pages/buyer/buyer-dashboard.php');
             break;
         default:
-            header('Location: /FARMLINK/pages/auth/login.php');
+            header('Location: ' . BASE_URL . '/pages/auth/login.php');
     }
     exit;
 }
@@ -47,7 +47,7 @@ if (SessionManager::isLoggedIn()) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FARMLINK • Connecting Farmers, Buyers & Markets in One Click!</title>
-    <link rel="icon" type="image/png" href="/FARMLINK/assets/img/farmlink-new-logo.png">
+    <link rel="icon" type="image/png" href="<?= BASE_URL ?>/assets/img/farmlink-new-logo.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         * {
@@ -66,7 +66,7 @@ if (SessionManager::isLoggedIn()) {
         .hero {
             min-height: 100vh;
             background: linear-gradient(rgba(27, 94, 32, 0.4), rgba(46, 125, 50, 0.3)), 
-                        url('/FARMLINK/assets/img/wheat-field-bg.jpg');
+                        url('<?= BASE_URL ?>/assets/img/wheat-field-bg.jpg');
             background-size: cover;
             background-position: center;
             background-attachment: fixed;
@@ -557,15 +557,15 @@ if (SessionManager::isLoggedIn()) {
     <nav class="navbar">
         <div class="nav-container">
             <div class="logo-section">
-                <img src="/FARMLINK/assets/img/farmlink.png" alt="FARMLINK Logo" class="logo" onerror="this.style.display='none'">
+                <img src="<?= BASE_URL ?>/assets/img/farmlink.png" alt="FARMLINK Logo" class="logo" onerror="this.style.display='none'">
                 <span class="brand-name">FARMLINK</span>
             </div>
             <ul class="nav-links">
                 <li><a href="#home">HOME</a></li>
                 <li><a href="#features">FEATURES</a></li>
                 <li><a href="#products">PRODUCTS</a></li>
-                <li><a href="/FARMLINK/pages/auth/login.php">LOGIN</a></li>
-                <li><a href="/FARMLINK/pages/auth/signup.php">REGISTER</a></li>
+                <li><a href="<?= BASE_URL ?>/pages/auth/login.php">LOGIN</a></li>
+                <li><a href="<?= BASE_URL ?>/pages/auth/signup.php">REGISTER</a></li>
             </ul>
         </div>
     </nav>
@@ -575,14 +575,14 @@ if (SessionManager::isLoggedIn()) {
         <div class="hero-container">
             <div class="hero-content">
                 <div class="hero-title">
-                    <img src="/FARMLINK/assets/img/farmlink.png" alt="FARMLINK Logo" class="hero-logo" onerror="this.style.display='none'">
+                    <img src="<?= BASE_URL ?>/assets/img/farmlink.png" alt="FARMLINK Logo" class="hero-logo" onerror="this.style.display='none'">
                     <h1>WELCOME TO FARMLINK</h1>
                 </div>
                 <div class="tagline">Connecting Farmers, Buyers & Markets</div>
                 <p>Empowering farmers, connecting communities, growing together. Buy & sell effortlessly, get real-time prices, manage orders & deliveries, access anywhere.</p>
                 
                 <div class="hero-buttons">
-                    <a href="/FARMLINK/pages/auth/signup.php" class="btn btn-primary">
+                    <a href="<?= BASE_URL ?>/pages/auth/signup.php" class="btn btn-primary">
                         <i class="fas fa-user-plus"></i> Get Started
                     </a>
                     <a href="#features" class="btn btn-secondary">
