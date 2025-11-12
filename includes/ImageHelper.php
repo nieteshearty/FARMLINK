@@ -20,23 +20,24 @@ class ImageHelper {
         }
         
         $imageValue = trim($imagePath);
+        $base = defined('BASE_URL') ? BASE_URL : '';
         
         // Handle different path formats
         if (strpos($imageValue, 'http') === 0) {
             // Full URL - use as is
             return $imageValue;
-        } elseif (strpos($imageValue, '/FARMLINK/') === 0) {
-            // Already has /FARMLINK/ prefix - use as is
+        } elseif (strpos($imageValue, $base . '/') === 0 || strpos($imageValue, '/FARMLINK/') === 0) {
+            // Already has site prefix - use as is
             return $imageValue;
         } elseif (strpos($imageValue, "uploads/{$type}/") === 0) {
             // Relative path starting with uploads/type/
-            return '/FARMLINK/' . $imageValue;
+            return $base . '/' . $imageValue;
         } elseif (strpos($imageValue, '/') === 0) {
             // Starts with / but no FARMLINK prefix
-            return '/FARMLINK' . $imageValue;
+            return $base . $imageValue;
         } else {
             // Just filename - add full path
-            return "/FARMLINK/uploads/{$type}/" . basename($imageValue);
+            return $base . "/uploads/{$type}/" . basename($imageValue);
         }
     }
     
@@ -48,7 +49,8 @@ class ImageHelper {
      */
     public static function getProductImageUrl($imagePath) {
         $normalizedPath = self::normalizeImagePath($imagePath, 'products');
-        return !empty($normalizedPath) ? $normalizedPath : '/FARMLINK/assets/img/product-placeholder.svg';
+        $base = defined('BASE_URL') ? BASE_URL : '';
+        return !empty($normalizedPath) ? $normalizedPath : $base . '/assets/img/product-placeholder.svg';
     }
     
     /**
@@ -59,7 +61,8 @@ class ImageHelper {
      */
     public static function getProfilePictureUrl($imagePath) {
         $normalizedPath = self::normalizeImagePath($imagePath, 'profiles');
-        return !empty($normalizedPath) ? $normalizedPath : '/FARMLINK/assets/img/default-avatar.png';
+        $base = defined('BASE_URL') ? BASE_URL : '';
+        return !empty($normalizedPath) ? $normalizedPath : $base . '/assets/img/default-avatar.png';
     }
     
     /**
@@ -74,7 +77,8 @@ class ImageHelper {
      */
     public static function generateImageTag($imagePath, $alt, $class = '', $type = 'products', $attributes = []) {
         $imageUrl = self::normalizeImagePath($imagePath, $type);
-        $fallbackUrl = $type === 'profiles' ? '/FARMLINK/assets/img/default-avatar.png' : '/FARMLINK/assets/img/product-placeholder.svg';
+        $base = defined('BASE_URL') ? BASE_URL : '';
+        $fallbackUrl = $type === 'profiles' ? ($base . '/assets/img/default-avatar.png') : ($base . '/assets/img/product-placeholder.svg');
         
         $attrs = [];
         $attrs[] = 'src="' . htmlspecialchars($imageUrl) . '"';

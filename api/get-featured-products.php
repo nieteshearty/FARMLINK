@@ -47,7 +47,8 @@ try {
     $featuredProducts = [];
     foreach ($products as $product) {
         // Handle image path
-        $imagePath = '/FARMLINK/assets/img/product-placeholder.svg'; // Default
+        $base = defined('BASE_URL') ? BASE_URL : '';
+        $imagePath = $base . '/assets/img/product-placeholder.svg'; // Default
         if (!empty($product['image'])) {
             $image = $product['image'];
             
@@ -55,18 +56,18 @@ try {
             if (strpos($image, 'http') === 0) {
                 // Full URL
                 $imagePath = $image;
-            } elseif (strpos($image, '/FARMLINK/') === 0) {
+            } elseif (strpos($image, $base . '/') === 0 || strpos($image, '/FARMLINK/') === 0) {
                 // Already has FARMLINK prefix
                 $imagePath = $image;
             } elseif (strpos($image, 'uploads/') === 0) {
                 // Relative path from FARMLINK root
-                $imagePath = '/FARMLINK/' . $image;
+                $imagePath = $base . '/' . $image;
             } elseif (strpos($image, '/uploads/') === 0) {
                 // Absolute path from server root
-                $imagePath = '/FARMLINK' . $image;
+                $imagePath = $base . $image;
             } else {
                 // Just filename, assume it's in products folder
-                $imagePath = '/FARMLINK/uploads/products/' . $image;
+                $imagePath = $base . '/uploads/products/' . $image;
             }
         }
         
@@ -84,7 +85,7 @@ try {
             'category' => $category,
             'image_url' => $imagePath,
             'farmer_name' => $product['farmer_name'] ?? 'Local Farmer',
-            'farmer_image' => $product['farmer_image'] ?? '/FARMLINK/assets/img/default-avatar.png',
+            'farmer_image' => $product['farmer_image'] ?? ($base . '/assets/img/default-avatar.png'),
             'status' => $product['status']
         ];
     }

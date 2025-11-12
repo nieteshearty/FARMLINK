@@ -71,11 +71,11 @@ $systemMetrics = DatabaseHelper::getSystemMetrics();
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <title>FarmLink • System Monitoring</title>
-    <link rel="icon" type="image/png" href="/FARMLINK/assets/img/farmlink.png">
-    <link rel="stylesheet" href="/FARMLINK/style.css">
-    <link rel="stylesheet" href="/FARMLINK/assets/css/superadmin.css">
-    <link rel="stylesheet" href="/FARMLINK/assets/css/logout-confirmation.css">
-    <link rel="stylesheet" href="/FARMLINK/assets/css/navigation.css">
+    <link rel="icon" type="image/png" href="<?= BASE_URL ?>/assets/img/farmlink.png">
+    <link rel="stylesheet" href="<?= BASE_URL ?>/style.css">
+    <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/superadmin.css">
+    <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/logout-confirmation.css">
+    <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/navigation.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body data-page="system-monitoring">
@@ -84,7 +84,7 @@ $systemMetrics = DatabaseHelper::getSystemMetrics();
             <button class="menu-toggle" onclick="toggleSidebar()">
                 <i class="fas fa-bars"></i>
             </button>
-            <img src="/FARMLINK/assets/img/farmlink.png" alt="FARMLINK Logo" class="nav-logo">
+            <img src="<?= BASE_URL ?>/assets/img/farmlink.png" alt="FARMLINK Logo" class="nav-logo">
             <span class="nav-title">System Monitoring</span>
         </div>
         <div class="nav-right">
@@ -93,18 +93,18 @@ $systemMetrics = DatabaseHelper::getSystemMetrics();
                 <?php
                 $profilePicPath = '';
                 if (!empty($user['profile_picture'])) {
-                    if (strpos($user['profile_picture'], '/FARMLINK/') === 0) {
+                    if (strpos($user['profile_picture'], BASE_URL . '/') === 0 || strpos($user['profile_picture'], '/FARMLINK/') === 0) {
                         $profilePicPath = $user['profile_picture'];
                     } elseif (strpos($user['profile_picture'], 'uploads/') === 0) {
-                        $profilePicPath = '/FARMLINK/' . $user['profile_picture'];
+                        $profilePicPath = BASE_URL . '/' . $user['profile_picture'];
                     } else {
-                        $profilePicPath = '/FARMLINK/uploads/profiles/' . basename($user['profile_picture']);
+                        $profilePicPath = BASE_URL . '/uploads/profiles/' . basename($user['profile_picture']);
                     }
                 } else {
-                    $profilePicPath = '/FARMLINK/assets/img/default-avatar.png';
+                    $profilePicPath = BASE_URL . '/assets/img/default-avatar.png';
                 }
                 ?>
-                <img src="<?= $profilePicPath ?>" alt="Profile" class="avatar" onerror="this.src='/FARMLINK/assets/img/default-avatar.png'">
+                <img src="<?= $profilePicPath ?>" alt="Profile" class="avatar" onerror="this.src='<?= BASE_URL ?>/assets/img/default-avatar.png'">
             </div>
         </div>
     </nav>
@@ -117,7 +117,7 @@ $systemMetrics = DatabaseHelper::getSystemMetrics();
         <a href="analytics.php"><i class="fas fa-chart-bar"></i> Analytics & Reports</a>
         <a href="settings.php"><i class="fas fa-cog"></i> Settings</a>
         <a href="superadmin-profile.php"><i class="fas fa-user"></i> Profile</a>
-        <a href="/FARMLINK/pages/auth/logout.php" class="logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        <a href="<?= BASE_URL ?>/pages/auth/logout.php" class="logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
     </div>
 
     <main class="main">
@@ -171,19 +171,19 @@ $systemMetrics = DatabaseHelper::getSystemMetrics();
                                             
                                             if (strpos($profileValue, 'http') === 0) {
                                                 $profileUrl = $profileValue;
-                                            } elseif (strpos($profileValue, '/FARMLINK/') === 0) {
+                                            } elseif (strpos($profileValue, BASE_URL . '/') === 0 || strpos($profileValue, '/FARMLINK/') === 0) {
                                                 $profileUrl = $profileValue;
                                             } elseif (strpos($profileValue, 'uploads/profiles/') === 0) {
-                                                $profileUrl = '/FARMLINK/' . $profileValue;
+                                                $profileUrl = BASE_URL . '/' . $profileValue;
                                             } elseif (strpos($profileValue, '/') === 0) {
-                                                $profileUrl = '/FARMLINK' . $profileValue;
+                                                $profileUrl = BASE_URL . $profileValue;
                                             } else {
-                                                $profileUrl = '/FARMLINK/uploads/profiles/' . basename($profileValue);
+                                                $profileUrl = BASE_URL . '/uploads/profiles/' . basename($profileValue);
                                             }
                                             ?>
                                             <img src="<?= htmlspecialchars($profileUrl) ?>" 
                                                  alt="Profile" class="user-thumb"
-                                                 onerror="this.src='/FARMLINK/assets/img/default-avatar.png';">
+                                                 onerror="this.src='<?= BASE_URL ?>/assets/img/default-avatar.png';">
                                         <?php else: ?>
                                             <div class="user-thumb-placeholder">
                                                 <?= strtoupper(substr($activeUser['username'], 0, 1)) ?>
@@ -425,6 +425,6 @@ $systemMetrics = DatabaseHelper::getSystemMetrics();
             sidebar.classList.toggle('active');
         }
     </script>
-    <script src="/FARMLINK/assets/js/logout-confirmation.js"></script>
+    <script src="<?= BASE_URL ?>/assets/js/logout-confirmation.js"></script>
 </body>
 </html>

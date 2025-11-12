@@ -62,10 +62,10 @@ if ($selectedFarmerId) {
 <head>
   <meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
   <title>FarmLink • Buyer Dashboard</title>
-  <link rel="icon" type="image/png" href="/FARMLINK/assets/img/farmlink.png">
-  <link rel="stylesheet" href="/FARMLINK/style.css?v=<?= time() ?>">
-  <link rel="stylesheet" href="/FARMLINK/assets/css/buyer.css?v=<?= time() ?>">
-  <link rel="stylesheet" href="/FARMLINK/assets/css/logout-confirmation.css?v=<?= time() ?>">
+  <link rel="icon" type="image/png" href="<?= BASE_URL ?>/assets/img/farmlink.png">
+  <link rel="stylesheet" href="<?= BASE_URL ?>/style.css?v=<?= time() ?>">
+  <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/buyer.css?v=<?= time() ?>">
+  <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/logout-confirmation.css?v=<?= time() ?>">
   
   <!-- Profile Picture Enhancement Styles -->
   <style>
@@ -134,7 +134,7 @@ if ($selectedFarmerId) {
 <body data-page="buyer-dashboard">
   <nav>
     <div class="nav-left">
-      <a href="buyer-dashboard.php"><img src="/FARMLINK/assets/img/farmlink.png" alt="FARMLINK" class="logo"></a>
+      <a href="buyer-dashboard.php"><img src="<?= BASE_URL ?>/assets/img/farmlink.png" alt="FARMLINK" class="logo"></a>
       <span class="brand">FARMLINK - BUYER</span>
     </div>
     <div class="nav-right">
@@ -145,9 +145,9 @@ if ($selectedFarmerId) {
           
           // If the path doesn't start with /, it's likely just a filename
           if (!str_starts_with($profilePicPath, '/')) {
-            $profilePicPath = '/FARMLINK/uploads/profiles/' . $profilePicPath;
+            $profilePicPath = BASE_URL . '/uploads/profiles/' . $profilePicPath;
           }
-          // Note: If it's already a full path starting with /FARMLINK/, we keep it as is
+          // Note: If it's already a full path starting with BASE_URL or /FARMLINK/, we keep it as is
         ?>
         <a href="buyer-profile.php"><img src="<?= htmlspecialchars($profilePicPath) ?>" alt="Profile" class="profile-pic"></a>
       <?php else: ?>
@@ -165,7 +165,7 @@ if ($selectedFarmerId) {
     <a href="buyer-cart.php">Shopping Cart</a>
     <a href="buyer-orders.php">My Orders</a>
     <a href="buyer-profile.php">Profile</a>
-    <a href="/FARMLINK/pages/auth/logout.php">Logout</a>
+    <a href="<?= BASE_URL ?>/pages/auth/logout.php">Logout</a>
   </div>
 
   <main class="main">
@@ -332,21 +332,21 @@ if ($selectedFarmerId) {
                       
                       if (strpos($imagePath, 'http') === 0) {
                           $imageUrl = $imagePath;
-                      } elseif (strpos($imagePath, '/FARMLINK/') === 0) {
+                      } elseif (strpos($imagePath, BASE_URL . '/') === 0 || strpos($imagePath, '/FARMLINK/') === 0) {
                           $imageUrl = $imagePath;
                       } elseif (strpos($imagePath, 'uploads/products/') === 0) {
-                          $imageUrl = '/FARMLINK/' . $imagePath;
+                          $imageUrl = BASE_URL . '/' . $imagePath;
                       } elseif (strpos($imagePath, '/') === 0) {
-                          $imageUrl = '/FARMLINK' . $imagePath;
+                          $imageUrl = BASE_URL . $imagePath;
                       } else {
-                          $imageUrl = '/FARMLINK/uploads/products/' . basename($imagePath);
+                          $imageUrl = BASE_URL . '/uploads/products/' . basename($imagePath);
                       }
                     ?>
-                    <img src="<?= htmlspecialchars($imageUrl) ?>" alt="<?= htmlspecialchars($product['name']) ?>" onerror="this.src='/FARMLINK/assets/img/placeholder-product.png';">
+                    <img src="<?= htmlspecialchars($imageUrl) ?>" alt="<?= htmlspecialchars($product['name']) ?>" onerror="this.src='<?= BASE_URL ?>/assets/img/placeholder-product.png';">
                   </div>
                 <?php else: ?>
                   <div class="product-image">
-                    <img src="/FARMLINK/assets/img/placeholder-product.png" alt="<?= htmlspecialchars($product['name']) ?>">
+                    <img src="<?= BASE_URL ?>/assets/img/placeholder-product.png" alt="<?= htmlspecialchars($product['name']) ?>">
                   </div>
                 <?php endif; ?>
                 <div class="product-info">

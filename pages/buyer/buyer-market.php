@@ -68,15 +68,15 @@ if ($farmerId) {
 <head>
   <meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
   <title>FarmLink • Browse Market</title>
-  <link rel="icon" type="image/png" href="/FARMLINK/assets/img/farmlink.png">
-  <link rel="stylesheet" href="/FARMLINK/style.css">
-  <link rel="stylesheet" href="/FARMLINK/assets/css/buyer.css">
-  <link rel="stylesheet" href="/FARMLINK/assets/css/logout-confirmation.css">
+  <link rel="icon" type="image/png" href="<?= BASE_URL ?>/assets/img/farmlink.png">
+  <link rel="stylesheet" href="<?= BASE_URL ?>/style.css">
+  <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/buyer.css">
+  <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/logout-confirmation.css">
 </head>
 <body data-page="buyer-market">
   <nav>
     <div class="nav-left">
-      <a href="buyer-dashboard.php"><img src="/FARMLINK/assets/img/farmlink.png" alt="FARMLINK Logo" class="logo"></a>
+      <a href="buyer-dashboard.php"><img src="<?= BASE_URL ?>/assets/img/farmlink.png" alt="FARMLINK Logo" class="logo"></a>
       <span class="brand">FARMLINK - BUYER</span>
     </div>
     <span>Browse Market</span>
@@ -88,7 +88,7 @@ if ($farmerId) {
     <a href="buyer-cart.php">Shopping Cart</a>
     <a href="buyer-orders.php">My Orders</a>
     <a href="buyer-profile.php">Profile</a>
-    <a href="/FARMLINK/pages/auth/logout.php">Logout</a>
+    <a href="<?= BASE_URL ?>/pages/auth/logout.php">Logout</a>
   </div>
 
   <main class="main">
@@ -135,30 +135,27 @@ if ($farmerId) {
         <?php foreach ($filteredProducts as $product): ?>
           <div class="market-card">
             <?php
-            // Handle product image display with fallback
+            // Handle product image display with fallback (filesystem check + BASE_URL for web)
             $imagePath = '';
             $hasImage = false;
             
             if (!empty($product['image'])) {
-                // Get the base filename
-                $baseFilename = basename($product['image']);
+                $imgVal = trim($product['image']);
+                $baseFilename = basename($imgVal);
+                $uploadsFs = '/uploads/products/';
+                $uploadsWeb = BASE_URL . '/uploads/products/';
                 
-                // Define the correct uploads directory path
-                $uploadsDir = '/FARMLINK/uploads/products/';
-                
-                // Check if the image exists in the uploads directory
-                if (file_exists($_SERVER['DOCUMENT_ROOT'] . $uploadsDir . $baseFilename)) {
-                    $imagePath = $uploadsDir . $baseFilename;
+                if (strpos($imgVal, 'http') === 0) {
+                    $imagePath = $imgVal;
                     $hasImage = true;
-                } 
-                // If not found, try with the path as stored in the database
-                elseif (file_exists($_SERVER['DOCUMENT_ROOT'] . $product['image'])) {
-                    $imagePath = $product['image'];
+                } elseif (file_exists($_SERVER['DOCUMENT_ROOT'] . $uploadsFs . $baseFilename)) {
+                    $imagePath = $uploadsWeb . $baseFilename;
                     $hasImage = true;
-                }
-                // If still not found, try with just the filename
-                elseif (file_exists($_SERVER['DOCUMENT_ROOT'] . $uploadsDir . $baseFilename)) {
-                    $imagePath = $uploadsDir . $baseFilename;
+                } elseif (strpos($imgVal, '/') === 0 && file_exists($_SERVER['DOCUMENT_ROOT'] . $imgVal)) {
+                    $imagePath = BASE_URL . $imgVal;
+                    $hasImage = true;
+                } elseif (strpos($imgVal, 'uploads/') === 0 && file_exists($_SERVER['DOCUMENT_ROOT'] . '/' . $imgVal)) {
+                    $imagePath = BASE_URL . '/' . $imgVal;
                     $hasImage = true;
                 }
             }
@@ -218,7 +215,7 @@ if ($farmerId) {
         };
         
         try {
-          const response = await fetch('/FARMLINK/api/cart.php', {
+          const response = await fetch('<?= BASE_URL ?>/api/cart.php', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',

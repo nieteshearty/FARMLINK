@@ -116,11 +116,11 @@ if (isset($_GET['success'])) {
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <title>FarmLink • Manage Products</title>
-    <link rel="icon" type="image/png" href="/FARMLINK/assets/img/farmlink.png">
-    <link rel="stylesheet" href="/FARMLINK/style.css">
-    <link rel="stylesheet" href="/FARMLINK/assets/css/superadmin.css">
-    <link rel="stylesheet" href="/FARMLINK/assets/css/logout-confirmation.css">
-    <link rel="stylesheet" href="/FARMLINK/assets/css/navigation.css">
+    <link rel="icon" type="image/png" href="<?= BASE_URL ?>/assets/img/farmlink.png">
+    <link rel="stylesheet" href="<?= BASE_URL ?>/style.css">
+    <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/superadmin.css">
+    <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/logout-confirmation.css">
+    <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/navigation.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body data-page="manage-products">
@@ -129,7 +129,7 @@ if (isset($_GET['success'])) {
             <button class="menu-toggle" onclick="toggleSidebar()">
                 <i class="fas fa-bars"></i>
             </button>
-            <img src="/FARMLINK/assets/img/farmlink.png" alt="FARMLINK Logo" class="nav-logo">
+            <img src="<?= BASE_URL ?>/assets/img/farmlink.png" alt="FARMLINK Logo" class="nav-logo">
             <span class="nav-title">Manage Products</span>
         </div>
         <div class="nav-right">
@@ -138,18 +138,18 @@ if (isset($_GET['success'])) {
                 <?php
                 $profilePicPath = '';
                 if (!empty($user['profile_picture'])) {
-                    if (strpos($user['profile_picture'], '/FARMLINK/') === 0) {
+                    if (strpos($user['profile_picture'], BASE_URL . '/') === 0 || strpos($user['profile_picture'], '/FARMLINK/') === 0) {
                         $profilePicPath = $user['profile_picture'];
                     } elseif (strpos($user['profile_picture'], 'uploads/') === 0) {
-                        $profilePicPath = '/FARMLINK/' . $user['profile_picture'];
+                        $profilePicPath = BASE_URL . '/' . $user['profile_picture'];
                     } else {
-                        $profilePicPath = '/FARMLINK/uploads/profiles/' . basename($user['profile_picture']);
+                        $profilePicPath = BASE_URL . '/uploads/profiles/' . basename($user['profile_picture']);
                     }
                 } else {
-                    $profilePicPath = '/FARMLINK/assets/img/default-avatar.png';
+                    $profilePicPath = BASE_URL . '/assets/img/default-avatar.png';
                 }
                 ?>
-                <img src="<?= $profilePicPath ?>" alt="Profile" class="avatar" onerror="this.src='/FARMLINK/assets/img/default-avatar.png'">
+                <img src="<?= $profilePicPath ?>" alt="Profile" class="avatar" onerror="this.src='<?= BASE_URL ?>/assets/img/default-avatar.png'">
             </div>
         </div>
     </nav>
@@ -162,7 +162,7 @@ if (isset($_GET['success'])) {
         <a href="analytics.php"><i class="fas fa-chart-bar"></i> Analytics & Reports</a>
         <a href="settings.php"><i class="fas fa-cog"></i> Settings</a>
         <a href="superadmin-profile.php"><i class="fas fa-user"></i> Profile</a>
-        <a href="/FARMLINK/pages/auth/logout.php" class="logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        <a href="<?= BASE_URL ?>/pages/auth/logout.php" class="logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
     </div>
 
     <main class="main">
@@ -245,14 +245,14 @@ if (isset($_GET['success'])) {
                                                 
                                                 if (strpos($imageValue, 'http') === 0) {
                                                     $imageUrl = $imageValue;
-                                                } elseif (strpos($imageValue, '/FARMLINK/') === 0) {
+                                                } elseif (strpos($imageValue, BASE_URL . '/') === 0 || strpos($imageValue, '/FARMLINK/') === 0) {
                                                     $imageUrl = $imageValue;
                                                 } elseif (strpos($imageValue, 'uploads/products/') === 0) {
-                                                    $imageUrl = '/FARMLINK/' . $imageValue;
+                                                    $imageUrl = BASE_URL . '/' . $imageValue;
                                                 } elseif (strpos($imageValue, '/') === 0) {
-                                                    $imageUrl = '/FARMLINK' . $imageValue;
+                                                    $imageUrl = BASE_URL . $imageValue;
                                                 } else {
-                                                    $imageUrl = '/FARMLINK/uploads/products/' . basename($imageValue);
+                                                    $imageUrl = BASE_URL . '/uploads/products/' . basename($imageValue);
                                                 }
                                                 ?>
                                                 <img src="<?= htmlspecialchars($imageUrl) ?>" 
@@ -282,12 +282,12 @@ if (isset($_GET['success'])) {
                                             <?php
                                             $farmerPicPath = '';
                                             if (!empty($product['farmer_avatar'])) {
-                                                if (strpos($product['farmer_avatar'], '/FARMLINK/') === 0) {
+                                                if (strpos($product['farmer_avatar'], BASE_URL . '/') === 0 || strpos($product['farmer_avatar'], '/FARMLINK/') === 0) {
                                                     $farmerPicPath = $product['farmer_avatar'];
                                                 } elseif (strpos($product['farmer_avatar'], 'uploads/') === 0) {
-                                                    $farmerPicPath = '/FARMLINK/' . $product['farmer_avatar'];
+                                                    $farmerPicPath = BASE_URL . '/' . $product['farmer_avatar'];
                                                 } else {
-                                                    $farmerPicPath = '/FARMLINK/uploads/profiles/' . basename($product['farmer_avatar']);
+                                                    $farmerPicPath = BASE_URL . '/uploads/profiles/' . basename($product['farmer_avatar']);
                                                 }
                                             }
                                             ?>

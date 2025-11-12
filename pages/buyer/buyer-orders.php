@@ -72,15 +72,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
 <head>
   <meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
   <title>FarmLink • My Orders</title>
-  <link rel="icon" type="image/png" href="/FARMLINK/assets/img/farmlink.png">
-  <link rel="stylesheet" href="/FARMLINK/style.css">
-  <link rel="stylesheet" href="/FARMLINK/assets/css/buyer.css">
-  <link rel="stylesheet" href="/FARMLINK/assets/css/logout-confirmation.css">
+  <link rel="icon" type="image/png" href="<?= BASE_URL ?>/assets/img/farmlink.png">
+  <link rel="stylesheet" href="<?= BASE_URL ?>/style.css">
+  <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/buyer.css">
+  <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/logout-confirmation.css">
 </head>
 <body data-page="buyer-orders">
   <nav>
     <div class="nav-left">
-      <a href="buyer-dashboard.php"><img src="/FARMLINK/assets/img/farmlink.png" alt="FARMLINK Logo" class="logo"></a>
+      <a href="buyer-dashboard.php"><img src="<?= BASE_URL ?>/assets/img/farmlink.png" alt="FARMLINK Logo" class="logo"></a>
       <span class="brand">FARMLINK - BUYER</span>
     </div>
     <span>My Orders</span>
@@ -92,7 +92,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     <a href="buyer-cart.php">Shopping Cart</a>
     <a href="buyer-orders.php" class="active">My Orders</a>
     <a href="buyer-profile.php">Profile</a>
-    <a href="/FARMLINK/pages/auth/logout.php">Logout</a>
+    <a href="<?= BASE_URL ?>/pages/auth/logout.php">Logout</a>
   </div>
 
   <main class="main">
@@ -707,6 +707,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
       }
     }
   </style>
-  <script src="/FARMLINK/assets/js/logout-confirmation.js"></script>
+  <script src="<?= BASE_URL ?>/assets/js/logout-confirmation.js"></script>
 </body>
 </html>

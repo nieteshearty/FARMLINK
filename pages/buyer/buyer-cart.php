@@ -300,10 +300,10 @@ $finalTotal = $selectedSubtotal;
 <head>
   <meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
   <title>FarmLink • Shopping Cart</title>
-  <link rel="icon" type="image/png" href="/FARMLINK/assets/img/farmlink.png">
-  <link rel="stylesheet" href="/FARMLINK/style.css">
-  <link rel="stylesheet" href="/FARMLINK/assets/css/buyer.css">
-  <link rel="stylesheet" href="/FARMLINK/assets/css/logout-confirmation.css">
+  <link rel="icon" type="image/png" href="<?= BASE_URL ?>/assets/img/farmlink.png">
+  <link rel="stylesheet" href="<?= BASE_URL ?>/style.css">
+  <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/buyer.css">
+  <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/logout-confirmation.css">
   <!-- Leaflet Maps for Location Services -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -311,7 +311,7 @@ $finalTotal = $selectedSubtotal;
 <body data-page="buyer-cart">
   <nav>
     <div class="nav-left">
-      <a href="buyer-dashboard.php"><img src="/FARMLINK/assets/img/farmlink.png" alt="FARMLINK Logo" class="logo"></a>
+      <a href="buyer-dashboard.php"><img src="<?= BASE_URL ?>/assets/img/farmlink.png" alt="FARMLINK Logo" class="logo"></a>
       <span class="brand">FARMLINK - BUYER</span>
     </div>
     <span>Shopping Cart</span>
@@ -323,7 +323,7 @@ $finalTotal = $selectedSubtotal;
     <a href="buyer-cart.php" class="active">Shopping Cart</a>
     <a href="buyer-orders.php">My Orders</a>
     <a href="buyer-profile.php">Profile</a>
-    <a href="/FARMLINK/pages/auth/logout.php">Logout</a>
+    <a href="<?= BASE_URL ?>/pages/auth/logout.php">Logout</a>
   </div>
 
   <main class="main">
@@ -408,18 +408,18 @@ $finalTotal = $selectedSubtotal;
                           if (strpos($imageValue, 'http') === 0) {
                               // Full URL - use as is
                               $imagePath = $imageValue;
-                          } elseif (strpos($imageValue, '/FARMLINK/') === 0) {
-                              // Already has /FARMLINK/ prefix - use as is
+                          } elseif (strpos($imageValue, BASE_URL . '/') === 0 || strpos($imageValue, '/FARMLINK/') === 0) {
+                              // Already has site prefix - use as is
                               $imagePath = $imageValue;
                           } elseif (strpos($imageValue, 'uploads/products/') === 0) {
                               // Relative path starting with uploads/products/
-                              $imagePath = '/FARMLINK/' . $imageValue;
+                              $imagePath = BASE_URL . '/' . $imageValue;
                           } elseif (strpos($imageValue, '/') === 0) {
-                              // Starts with / but no FARMLINK prefix
-                              $imagePath = '/FARMLINK' . $imageValue;
+                              // Starts with /
+                              $imagePath = BASE_URL . $imageValue;
                           } else {
                               // Just filename - add full path
-                              $imagePath = '/FARMLINK/uploads/products/' . basename($imageValue);
+                              $imagePath = BASE_URL . '/uploads/products/' . basename($imageValue);
                           }
                       }
                       ?>

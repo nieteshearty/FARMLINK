@@ -12,7 +12,7 @@ function displayProductImage($imagePath, $altText = 'Product Image', $attributes
         'class' => 'product-image',
         'style' => 'width: 200px; height: 200px; object-fit: cover;',
         'loading' => 'lazy',
-        'onerror' => "this.onerror=null; this.src='/FARMLINK/assets/img/placeholder.jpg';"
+        'onerror' => "this.onerror=null; this.src='" . (defined('BASE_URL') ? BASE_URL : '') . "/assets/img/placeholder.jpg';"
     ];
     
     // Merge default attributes with custom ones
@@ -26,7 +26,7 @@ function displayProductImage($imagePath, $altText = 'Product Image', $attributes
     
     // If no image path is provided, use placeholder
     if (empty($imagePath) || !file_exists($_SERVER['DOCUMENT_ROOT'] . parse_url($imagePath, PHP_URL_PATH))) {
-        $imagePath = '/FARMLINK/assets/img/placeholder.jpg';
+        $imagePath = (defined('BASE_URL') ? BASE_URL : '') . '/assets/img/placeholder.jpg';
     }
     
     return '<img src="' . htmlspecialchars($imagePath, ENT_QUOTES) . '" alt="' . htmlspecialchars($altText) . '"' . $attrString . '>';

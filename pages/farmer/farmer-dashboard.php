@@ -19,15 +19,15 @@ $recentActivity = DatabaseHelper::getRecentActivity(5, $user['id']);
 <head>
   <meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
   <title>FarmLink • Farmer Dashboard</title>
-  <link rel="icon" type="image/png" href="/FARMLINK/assets/img/farmlink.png">
-  <link rel="stylesheet" href="/FARMLINK/style.css">
-  <link rel="stylesheet" href="/FARMLINK/assets/css/farmer.css">
-  <link rel="stylesheet" href="/FARMLINK/assets/css/logout-confirmation.css">
+  <link rel="icon" type="image/png" href="<?= BASE_URL ?>/assets/img/farmlink.png">
+  <link rel="stylesheet" href="<?= BASE_URL ?>/style.css">
+  <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/farmer.css">
+  <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/logout-confirmation.css">
 </head>
 <body data-page="farmer-dashboard">
   <nav>
     <div class="nav-left">
-      <a href="farmer-dashboard.php"><img src="/FARMLINK/assets/img/farmlink.png" alt="FARMLINK" class="logo"></a>
+      <a href="farmer-dashboard.php"><img src="<?= BASE_URL ?>/assets/img/farmlink.png" alt="FARMLINK" class="logo"></a>
       <span class="brand">FARMLINK - FARMER</span>
     </div>
     <div class="nav-right">
@@ -38,16 +38,16 @@ $recentActivity = DatabaseHelper::getRecentActivity(5, $user['id']);
           
           // If the path doesn't start with /, it's likely just a filename
           if (strpos($profilePicPath, '/') !== 0) {
-            $profilePicPath = '/FARMLINK/uploads/profiles/' . $profilePicPath;
+            $profilePicPath = BASE_URL . '/uploads/profiles/' . $profilePicPath;
           }
           
           // If it's already a full path starting with /FARMLINK/, use as is
           // Otherwise, ensure it has the correct prefix
-          if (strpos($profilePicPath, '/FARMLINK/') !== 0) {
-            $profilePicPath = '/FARMLINK' . ltrim($profilePicPath, '/');
+          if (strpos($profilePicPath, BASE_URL . '/') !== 0 && strpos($profilePicPath, '/FARMLINK/') !== 0) {
+            $profilePicPath = BASE_URL . '/' . ltrim($profilePicPath, '/');
           }
         ?>
-        <img src="<?= htmlspecialchars($profilePicPath) ?>" alt="Profile" class="profile-pic" onerror="this.src='/FARMLINK/assets/img/default-avatar.png';">
+        <img src="<?= htmlspecialchars($profilePicPath) ?>" alt="Profile" class="profile-pic" onerror="this.src='<?= BASE_URL ?>/assets/img/default-avatar.png';">
       <?php else: ?>
         <div class="profile-pic-default">
           <?= strtoupper(substr($user['username'], 0, 1)) ?>
@@ -63,7 +63,7 @@ $recentActivity = DatabaseHelper::getRecentActivity(5, $user['id']);
     <a href="farmer-orders.php">Orders</a>
     <a href="farmer-delivery-zones.php">Delivery Zones</a>
     <a href="farmer-profile.php">Profile</a>
-    <a href="/FARMLINK/pages/auth/logout.php">Logout</a>
+    <a href="<?= BASE_URL ?>/pages/auth/logout.php">Logout</a>
   </div>
 
   <main class="main">
@@ -171,6 +171,6 @@ $recentActivity = DatabaseHelper::getRecentActivity(5, $user['id']);
       font-size: 16px;
     }
   </style>
-  <script src="/FARMLINK/assets/js/logout-confirmation.js"></script>
+  <script src="<?= BASE_URL ?>/assets/js/logout-confirmation.js"></script>
 </body>
 </html>

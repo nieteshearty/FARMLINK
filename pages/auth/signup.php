@@ -65,7 +65,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $_SESSION['success'] = "Registration successful! You can now log in.";
                 
                 // Redirect to login page
-                header("Location: /FARMLINK/pages/auth/login.php");
+                header("Location: " . BASE_URL . "/pages/auth/login.php");
                 exit;
             }
         } catch (PDOException $e) {
@@ -82,7 +82,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Create Account - FARMLINK</title>
-    <link rel="stylesheet" href="/FARMLINK/assets/css/auth.css?v=<?= time() . rand(1000, 9999) ?>">
+    <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/auth.css?v=<?= time() . rand(1000, 9999) ?>">
     <style>
         /* FORCE OVERRIDE ALL STYLES - HIGHEST PRIORITY */
         html {
@@ -521,8 +521,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <div class="auth-box">
       <div class="auth-header">
         <div class="logo-container">
-          <a href="/FARMLINK/index.php">
-            <img src="/FARMLINK/assets/img/farmlink.png" alt="FARMLINK" class="logo">
+          <a href="<?= BASE_URL ?>/index.php">
+            <img src="<?= BASE_URL ?>/assets/img/farmlink.png" alt="FARMLINK" class="logo">
           </a>
         </div>
         <h1>Create Account</h1>
@@ -547,7 +547,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <label>Profile Picture (Optional)</label>
             <div class="profile-upload-container">
                 <div class="profile-image-container" onclick="document.getElementById('profilePic').click()">
-                    <img id="profilePreview" src="/FARMLINK/assets/img/default-avatar.png" alt="Profile Preview" class="profile-image">
+                    <img id="profilePreview" src="<?= BASE_URL ?>/assets/img/default-avatar.png" alt="Profile Preview" class="profile-image">
                     <div class="upload-overlay">
                         <i class="upload-icon">📷</i>
                         <span>Choose Photo</span>
@@ -597,7 +597,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         
         <p class="switch">
             Already have an account? 
-            <a href="/FARMLINK/pages/auth/login.php" class="text-link">Log in here</a>
+            <a href="<?= BASE_URL ?>/pages/auth/login.php" class="text-link">Log in here</a>
         </p>
       </form>
     </div>
@@ -642,7 +642,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             
             reader.readAsDataURL(file);
         } else {
-            preview.src = '/FARMLINK/assets/img/default-avatar.png';
+            preview.src = '<?= BASE_URL ?>/assets/img/default-avatar.png';
             fileInfo.textContent = 'No file chosen';
             preview.classList.remove('has-image');
         }

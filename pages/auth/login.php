@@ -23,11 +23,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             
             // Set redirect URL based on user role - using relative URLs from web root
             $redirect = match($user['role']) {
-                'super_admin' => '/FARMLINK/pages/superadmin/dashboard.php?login=success',
-                'admin' => '/FARMLINK/pages/admin/dashboard.php',
-                'farmer' => '/FARMLINK/pages/farmer/farmer-dashboard.php',
-                'buyer' => '/FARMLINK/pages/buyer/buyer-dashboard.php',
-                default => '/FARMLINK/index.php'
+                'super_admin' => BASE_URL . '/pages/superadmin/dashboard.php?login=success',
+                'admin' => BASE_URL . '/pages/admin/dashboard.php',
+                'farmer' => BASE_URL . '/pages/farmer/farmer-dashboard.php',
+                'buyer' => BASE_URL . '/pages/buyer/buyer-dashboard.php',
+                default => BASE_URL . '/index.php'
             };
             
             header("Location: $redirect");
@@ -47,8 +47,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - FARMLINK</title>
-    <link rel="icon" type="image/png" href="/FARMLINK/assets/img/farmlink.png">
-    <link rel="stylesheet" href="/FARMLINK/assets/css/auth.css?v=<?= time() ?>">
+    <link rel="icon" type="image/png" href="<?= BASE_URL ?>/assets/img/farmlink.png">
+    <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/auth.css?v=<?= time() ?>">
     <style>
         /* Agricultural Theme Background */
         body {
@@ -174,8 +174,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <body>
     <div class="login-container">
         <div class="logo-container">
-            <a href="/FARMLINK/index.php">
-                <img src="/FARMLINK/assets/img/farmlink.png" alt="FARMLINK" class="logo">
+            <a href="<?= BASE_URL ?>/index.php">
+                <img src="<?= BASE_URL ?>/assets/img/farmlink.png" alt="FARMLINK" class="logo">
             </a>
         </div>
         <h1>Welcome Back</h1>
@@ -199,7 +199,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <div class="form-group">
                 <div style="display: flex; justify-content: space-between; align-items: center;">
                     <label for="password">Password</label>
-                    <a href="/FARMLINK/pages/auth/forgot-password.php" class="forgot-password">Forgot Password?</a>
+                    <a href="<?= BASE_URL ?>/pages/auth/forgot-password.php" class="forgot-password">Forgot Password?</a>
                 </div>
                 <input type="password" id="password" name="password" class="form-control" required>
             </div>
@@ -207,7 +207,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <button type="submit" class="btn">Log in</button>
             
             <p class="signup-link">
-                Don't have an account? <a href="/FARMLINK/pages/auth/signup.php">Sign up</a>
+                Don't have an account? <a href="<?= BASE_URL ?>/pages/auth/signup.php">Sign up</a>
             </p>
         </form>
     </div>
