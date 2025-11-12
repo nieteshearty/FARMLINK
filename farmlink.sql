@@ -6,8 +6,7 @@
 -- ===================================================================
 
 -- Create and use database
-CREATE DATABASE IF NOT EXISTS farmlink CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-USE farmlink;
+USE if0_40396777_farmlink;
 
 -- ===================================================================
 -- 1. CORE TABLES (Base Schema)
