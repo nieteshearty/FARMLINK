@@ -737,17 +737,7 @@ if (SessionManager::isLoggedIn()) {
                             u.province as farmer_province,
                             u.latitude as farmer_lat,
                             u.longitude as farmer_lng,
-                            u.profile_picture as farmer_image,
-                            u.average_rating as farmer_rating,
-                            u.total_reviews as farmer_reviews,
-                            u.delivery_radius_km,
-                            u.delivery_fee_per_km,
-                            u.min_delivery_fee,
-                            u.free_delivery_threshold,
-                            u.delivery_days,
-                            u.pickup_available,
-                            u.delivery_available,
-                            u.pickup_location
+                            u.profile_picture as farmer_image
                         FROM products p
                         LEFT JOIN users u ON p.farmer_id = u.id
                         WHERE p.status = 'active' OR p.status IS NULL
