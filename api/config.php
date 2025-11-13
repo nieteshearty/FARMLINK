@@ -21,8 +21,15 @@ if (!defined('BASE_URL')) {
         define('BASE_URL', rtrim($baseOverride, '/'));
     } else {
         $scriptName = $_SERVER['SCRIPT_NAME'] ?? '';
-        $base = rtrim(str_replace('\\', '/', dirname($scriptName)), '/');
-        define('BASE_URL', $base === '/' ? '' : $base);
+        $dir = rtrim(str_replace('\\', '/', dirname($scriptName)), '/');
+        // If script is under /pages/... or /api/... then base is the parent segment (project root),
+        // otherwise fall back to '' (web root) when directly under root.
+        if (preg_match('#^(.+?)/(?:pages|api)(?:/|$)#', $dir, $m)) {
+            $base = rtrim($m[1], '/');
+        } else {
+            $base = ($dir === '/' ? '' : $dir);
+        }
+        define('BASE_URL', $base);
     }
 }
 
