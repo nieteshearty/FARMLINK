@@ -95,13 +95,12 @@ FARMLINK is a **streamlined agricultural marketplace** that facilitates direct c
    mysql -u root -p farmlink < farmlink.sql
    ```
 
-3. **Configure Database Connection** in `api/config.php`:
-   ```php
-   define('DB_HOST', 'localhost');
-   define('DB_NAME', 'farmlink');
-   define('DB_USER', 'root');        // Your MySQL username
-   define('DB_PASS', '');            // Your MySQL password
-   ```
+3. **Configure Database Connection**
+   - The app prefers environment variables (suitable for Wasmer/containers). If not present, it falls back to local defaults.
+   - Supported env vars:
+     - `DATABASE_URL` (e.g., `mysql://user:pass@host:port/dbname`)
+     - `MYSQLHOST`, `MYSQLPORT`, `MYSQLDATABASE`, `MYSQLUSER`, `MYSQLPASSWORD`
+   - For local dev without env vars, set credentials in Apache or a local `.env` equivalent, or ensure your local MySQL matches the defaults in `api/config.php`.
 
 ### **Step 3: File Permissions**
 Set appropriate permissions for upload directories:
@@ -112,9 +111,18 @@ chmod 755 uploads/products/
 ```
 
 ### **Step 4: Access the Application**
-Navigate to: `http://localhost/FARMLINK/`
+Navigate to your base URL. Examples:
+- Local XAMPP: `http://localhost/FARMLINK/`
+- Wasmer: the provided public URL, e.g., `https://<your-app>.wasmer.app/`
 
 The system will automatically redirect to the login page and then to the appropriate dashboard based on user role.
+
+### **Step 5 (Optional): Wasmer Deployment**
+- Ensure the following environment variables are set in Wasmer:
+  - `DATABASE_URL` or the `MYSQL*` variables listed above
+  - Optional: `FORCE_HTTPS=true`
+- The application uses a PHP constant `BASE_URL` to prefix all web asset and route links. On Wasmer, this resolves correctly to avoid 404s.
+- Upload directories must exist at `/uploads/profiles` and `/uploads/products` in the deployed environment.
 
 ## 🔐 Demo Accounts
 
@@ -315,6 +323,24 @@ The system uses a comprehensive MySQL database with 15+ interconnected tables:
 - **Error Handling:** Comprehensive error logging and user feedback
 - **Cache Management:** Implemented cache-busting for CSS and JavaScript files
 - **Input Validation:** Enhanced phone number and location data validation
+
+### **☁️ Wasmer Migration (2025)**
+- Replaced hardcoded `/FARMLINK/` paths with dynamic `BASE_URL` across PHP, HTML, and JavaScript.
+- Normalized upload storage to relative paths (e.g., `uploads/products/...`, `uploads/profiles/...`) and render via `BASE_URL`.
+- Updated asset links (CSS/JS/images) and internal navigation to be BASE_URL-aware.
+- Fixed SQL queries to match Wasmer DB schema where columns differed.
+
+#### BASE_URL Conventions
+- Always build web URLs like:
+  - `<?= BASE_URL ?>/assets/css/...`
+  - `<?= BASE_URL ?>/assets/js/...`
+  - `<?= BASE_URL ?>/uploads/products/filename.jpg`
+- JavaScript fetch calls should prefix `BASE_URL` in embedded PHP or use a server-provided base.
+
+#### Troubleshooting on Wasmer
+- 404s for CSS/JS/Images usually mean a hardcoded `/FARMLINK/` remains. Replace with `<?= BASE_URL ?>`.
+- Image paths saved in DB should be relative (e.g., `uploads/products/...`). Rendering will prepend `BASE_URL`.
+- Ensure upload directories exist and are writable.
 
 ## 🔧 Development & Customization
 
