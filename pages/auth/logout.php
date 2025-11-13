@@ -10,6 +10,6 @@ require $basePath . '/includes/session.php';
 SessionManager::logout();
 
 // Redirect to login page with logout message
-header("Location: /FARMLINK/pages/auth/login.php?logout=1");
+header("Location: " . (defined('BASE_URL') ? BASE_URL : '') . "/pages/auth/login.php?logout=1");
 exit;
 ?>

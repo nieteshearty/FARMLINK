@@ -120,16 +120,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <title>Order #<?= $order['id'] ?> Details | FarmLink</title>
-    <link rel="icon" type="image/png" href="/FARMLINK/assets/img/farmlink.png">
-    <link rel="stylesheet" href="/FARMLINK/style.css">
-    <link rel="stylesheet" href="/FARMLINK/assets/css/farmer.css">
-  <link rel="stylesheet" href="/FARMLINK/assets/css/logout-confirmation.css">
+    <link rel="icon" type="image/png" href="<?= BASE_URL ?>/assets/img/farmlink.png">
+    <link rel="stylesheet" href="<?= BASE_URL ?>/style.css">
+    <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/farmer.css">
+  <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/logout-confirmation.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body data-page="order-details">
     <nav>
         <div class="nav-left">
-            <a href="farmer-dashboard.php"><img src="/FARMLINK/assets/img/farmlink.png" alt="FARMLINK" class="logo"></a>
+            <a href="farmer-dashboard.php"><img src="<?= BASE_URL ?>/assets/img/farmlink.png" alt="FARMLINK" class="logo"></a>
             <span class="brand">FARMLINK - FARMER</span>
         </div>
         <div class="nav-right">
@@ -143,7 +143,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         <a href="farmer-orders.php" class="active">Orders</a>
         <a href="farmer-profile.php#delivery-zones">Delivery Zones</a>
         <a href="farmer-profile.php">Profile</a>
-        <a href="/FARMLINK/pages/auth/logout.php">Logout</a>
+        <a href="<?= BASE_URL ?>/pages/auth/logout.php">Logout</a>
     </div>
 
     <main class="main">
@@ -232,15 +232,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                         <div class="buyer-avatar">
                             <?php if (!empty($order['buyer_profile_picture'])): ?>
                                 <?php 
-                                $profilePicPath = $order['buyer_profile_picture'];
-                                if (!str_starts_with($profilePicPath, '/')) {
-                                    $profilePicPath = '/FARMLINK/uploads/profiles/' . $profilePicPath;
+                                $profilePicPath = trim($order['buyer_profile_picture']);
+                                if (strpos($profilePicPath, 'http') === 0) {
+                                    // use as is
+                                } elseif (strpos($profilePicPath, BASE_URL . '/') === 0 || strpos($profilePicPath, '/FARMLINK/') === 0) {
+                                    // already base-prefixed
+                                } elseif (strpos($profilePicPath, 'uploads/') === 0) {
+                                    $profilePicPath = BASE_URL . '/' . $profilePicPath;
+                                } elseif (strpos($profilePicPath, '/') === 0) {
+                                    $profilePicPath = BASE_URL . $profilePicPath;
+                                } else {
+                                    $profilePicPath = BASE_URL . '/uploads/profiles/' . $profilePicPath;
                                 }
                                 ?>
                                 <img src="<?= htmlspecialchars($profilePicPath) ?>" 
                                      alt="Buyer Profile" 
                                      class="profile-pic"
-                                     onerror="this.onerror=null; this.src='/FARMLINK/assets/img/default-avatar.png';">
+                                     onerror="this.onerror=null; this.src='<?= BASE_URL ?>/assets/img/default-avatar.png';">
                             <?php else: ?>
                                 <div class="profile-pic-default">
                                     <?= strtoupper(substr($order['buyer_name'], 0, 1)) ?>
@@ -899,6 +907,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
             }
         }
     </style>
-  <script src="/FARMLINK/assets/js/logout-confirmation.js"></script>
+  <script src="<?= BASE_URL ?>/assets/js/logout-confirmation.js"></script>
 </body>
 </html>

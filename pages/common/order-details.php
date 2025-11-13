@@ -55,9 +55,9 @@ try {
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
     <title>Order Details - #<?= $order['id'] ?></title>
-    <link rel="icon" type="image/png" href="/FARMLINK/assets/img/farmlink.png">
-    <link rel="stylesheet" href="/FARMLINK/style.css">
-    <link rel="stylesheet" href="/FARMLINK/assets/css/<?= $user['role'] === 'farmer' ? 'farmer' : 'buyer' ?>.css">
+    <link rel="icon" type="image/png" href="<?= BASE_URL ?>/assets/img/farmlink.png">
+    <link rel="stylesheet" href="<?= BASE_URL ?>/style.css">
+    <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/<?= $user['role'] === 'farmer' ? 'farmer' : 'buyer' ?>.css">
 </head>
 <body style="padding: 20px;">
     <div class="card">

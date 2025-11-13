@@ -3,7 +3,11 @@ require_once __DIR__ . '/api/config.php';
 header('Content-Type: application/json');
 $action = $_GET['action'] ?? '';
 if ($action === 'liveconfig') {
-    $basePath = (strpos($_SERVER['REQUEST_URI'] ?? '', '/FARMLINK/') !== false || strpos($_SERVER['HTTP_REFERER'] ?? '', '/FARMLINK/') !== false) ? '/FARMLINK' : '';
+    // Prefer configured BASE_URL; fallback to legacy /FARMLINK detection
+    $basePath = defined('BASE_URL') ? BASE_URL : '';
+    if ($basePath === '') {
+        $basePath = (strpos($_SERVER['REQUEST_URI'] ?? '', '/FARMLINK/') !== false || strpos($_SERVER['HTTP_REFERER'] ?? '', '/FARMLINK/') !== false) ? '/FARMLINK' : '';
+    }
     echo json_encode([
         'ok' => true,
         'basePath' => $basePath,

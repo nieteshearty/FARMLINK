@@ -957,7 +957,7 @@ if (isset($_GET['success'])) {
             error.style.display = 'none';
             
             // Fetch product details
-            fetch(`/FARMLINK/api/product-details.php?id=${productId}`)
+            fetch('<?= BASE_URL ?>/api/product-details.php?id=' + productId)
                 .then(response => {
                     if (!response.ok) {
                         return response.text().then(text => {
@@ -993,19 +993,20 @@ if (isset($_GET['success'])) {
             document.getElementById('modalProductName').textContent = product.name;
             
             // Build image URL
+            const BASE = '<?= BASE_URL ?>';
             let imageUrl = '';
             if (product.image) {
                 const imageValue = product.image.trim();
                 if (imageValue.startsWith('http')) {
                     imageUrl = imageValue;
-                } else if (imageValue.startsWith('/FARMLINK/')) {
+                } else if (imageValue.startsWith(BASE + '/')) {
                     imageUrl = imageValue;
                 } else if (imageValue.startsWith('uploads/products/')) {
-                    imageUrl = '/FARMLINK/' + imageValue;
+                    imageUrl = BASE + '/' + imageValue;
                 } else if (imageValue.startsWith('/')) {
-                    imageUrl = '/FARMLINK' + imageValue;
+                    imageUrl = BASE + imageValue;
                 } else {
-                    imageUrl = '/FARMLINK/uploads/products/' + imageValue.split('/').pop();
+                    imageUrl = BASE + '/uploads/products/' + imageValue.split('/').pop();
                 }
             }
             
@@ -1013,12 +1014,12 @@ if (isset($_GET['success'])) {
             let farmerAvatarUrl = '';
             if (product.farmer_avatar) {
                 const avatarValue = product.farmer_avatar.trim();
-                if (avatarValue.startsWith('/FARMLINK/')) {
+                if (avatarValue.startsWith(BASE + '/')) {
                     farmerAvatarUrl = avatarValue;
                 } else if (avatarValue.startsWith('uploads/')) {
-                    farmerAvatarUrl = '/FARMLINK/' + avatarValue;
+                    farmerAvatarUrl = BASE + '/' + avatarValue;
                 } else {
-                    farmerAvatarUrl = '/FARMLINK/uploads/profiles/' + avatarValue.split('/').pop();
+                    farmerAvatarUrl = BASE + '/uploads/profiles/' + avatarValue.split('/').pop();
                 }
             }
             
@@ -1172,6 +1173,6 @@ if (isset($_GET['success'])) {
             }
         });
     </script>
-    <script src="/FARMLINK/assets/js/logout-confirmation.js"></script>
+    <script src="<?= BASE_URL ?>/assets/js/logout-confirmation.js"></script>
 </body>
 </html>

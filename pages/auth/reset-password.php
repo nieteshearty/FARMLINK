@@ -84,13 +84,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !$error) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Reset Password - FARMLINK</title>
-    <link rel="icon" type="image/png" href="/FARMLINK/assets/img/farmlink.png">
-    <link rel="stylesheet" href="/FARMLINK/assets/css/auth.css">
+    <link rel="icon" type="image/png" href="<?= BASE_URL ?>/assets/img/farmlink.png">
+    <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/auth.css">
 </head>
 <body>
     <div class="login-container">
         <div class="logo-container">
-            <img src="/FARMLINK/assets/img/farmlink.png" alt="FARMLINK" class="logo">
+            <img src="<?= BASE_URL ?>/assets/img/farmlink.png" alt="FARMLINK" class="logo">
         </div>
         
         <h1>Reset Password</h1>
@@ -100,13 +100,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !$error) {
             <div class="success-message">
                 <?= htmlspecialchars($success) ?>
                 <br><br>
-                <a href="/FARMLINK/pages/auth/login.php" class="btn">Go to Login</a>
+                <a href="<?= BASE_URL ?>/pages/auth/login.php" class="btn">Go to Login</a>
             </div>
         <?php elseif ($error): ?>
             <div class="error-message"><?= htmlspecialchars($error) ?></div>
             <?php if (strpos($error, 'Invalid') === 0): ?>
                 <div class="signup-link">
-                    <a href="/FARMLINK/pages/auth/forgot-password.php">Request a new reset link</a>
+                    <a href="<?= BASE_URL ?>/pages/auth/forgot-password.php">Request a new reset link</a>
                 </div>
             <?php endif; ?>
         <?php else: ?>
@@ -126,7 +126,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !$error) {
                 <button type="submit" class="btn">Reset Password</button>
                 
                 <div class="signup-link">
-                    Remember your password? <a href="/FARMLINK/pages/auth/login.php">Back to Login</a>
+                    Remember your password? <a href="<?= BASE_URL ?>/pages/auth/login.php">Back to Login</a>
                 </div>
             </form>
         <?php endif; ?>

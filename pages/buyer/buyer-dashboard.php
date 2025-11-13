@@ -409,21 +409,21 @@ if ($selectedFarmerId) {
                       
                       if (strpos($imagePath, 'http') === 0) {
                           $imageUrl = $imagePath;
-                      } elseif (strpos($imagePath, '/FARMLINK/') === 0) {
+                      } elseif (strpos($imagePath, BASE_URL . '/') === 0 || strpos($imagePath, '/FARMLINK/') === 0) {
                           $imageUrl = $imagePath;
                       } elseif (strpos($imagePath, 'uploads/products/') === 0) {
-                          $imageUrl = '/FARMLINK/' . $imagePath;
+                          $imageUrl = BASE_URL . '/' . $imagePath;
                       } elseif (strpos($imagePath, '/') === 0) {
-                          $imageUrl = '/FARMLINK' . $imagePath;
+                          $imageUrl = BASE_URL . $imagePath;
                       } else {
-                          $imageUrl = '/FARMLINK/uploads/products/' . basename($imagePath);
+                          $imageUrl = BASE_URL . '/uploads/products/' . basename($imagePath);
                       }
                     ?>
-                    <img src="<?= htmlspecialchars($imageUrl) ?>" alt="<?= htmlspecialchars($product['name']) ?>" onerror="this.src='/FARMLINK/assets/img/placeholder-product.png';">
+                    <img src="<?= htmlspecialchars($imageUrl) ?>" alt="<?= htmlspecialchars($product['name']) ?>" onerror="this.src='<?= BASE_URL ?>/assets/img/placeholder-product.png';">
                   </div>
                 <?php else: ?>
                   <div class="product-image">
-                    <img src="/FARMLINK/assets/img/placeholder-product.png" alt="<?= htmlspecialchars($product['name']) ?>">
+                    <img src="<?= BASE_URL ?>/assets/img/placeholder-product.png" alt="<?= htmlspecialchars($product['name']) ?>">
                   </div>
                 <?php endif; ?>
                 <div class="product-info">

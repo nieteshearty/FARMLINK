@@ -104,21 +104,22 @@ try {
     
     // Format reviews
     $formattedReviews = array_map(function($review) {
+        $base = defined('BASE_URL') ? BASE_URL : '';
+        $normalize = function($v, $type = 'profiles') use ($base) {
+            if (empty($v)) return '';
+            $v = trim($v);
+            if (strpos($v, 'http') === 0) return $v;
+            if (strpos($v, $base . '/') === 0 || strpos($v, '/FARMLINK/') === 0) return $v;
+            if (strpos($v, 'uploads/') === 0) return $base . '/' . $v;
+            if (strpos($v, '/') === 0) return $base . $v;
+            return $base . '/uploads/' . $type . '/' . basename($v);
+        };
+
         // Handle buyer avatar
-        $buyerAvatar = $review['buyer_avatar'];
-        if ($buyerAvatar && !str_starts_with($buyerAvatar, 'http')) {
-            if (!str_starts_with($buyerAvatar, '/FARMLINK/')) {
-                $buyerAvatar = '/FARMLINK/uploads/profiles/' . basename($buyerAvatar);
-            }
-        }
+        $buyerAvatar = $normalize($review['buyer_avatar'] ?? '', 'profiles');
         
         // Handle product image
-        $productImage = $review['product_image'];
-        if ($productImage && !str_starts_with($productImage, 'http')) {
-            if (!str_starts_with($productImage, '/FARMLINK/')) {
-                $productImage = '/FARMLINK/uploads/products/' . basename($productImage);
-            }
-        }
+        $productImage = $normalize($review['product_image'] ?? '', 'products');
         
         // Parse review images
         $reviewImages = [];
@@ -141,12 +142,12 @@ try {
             'buyer' => [
                 'id' => $review['buyer_id'],
                 'username' => $review['buyer_name'],
-                'avatar' => $buyerAvatar ?: '/FARMLINK/assets/img/default-avatar.png'
+                'avatar' => $buyerAvatar ?: ($base . '/assets/img/default-avatar.png')
             ],
             'product' => [
                 'id' => $review['product_id'],
                 'name' => $review['product_name'],
-                'image' => $productImage ?: '/FARMLINK/assets/img/product-placeholder.svg'
+                'image' => $productImage ?: ($base . '/assets/img/product-placeholder.svg')
             ],
             'farmer' => [
                 'id' => $review['farmer_id'],

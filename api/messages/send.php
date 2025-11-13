@@ -79,7 +79,8 @@ try {
             $uploadPath = $uploadDir . $fileName;
             
             if (move_uploaded_file($_FILES['file']['tmp_name'], $uploadPath)) {
-                $filePath = '/FARMLINK/uploads/messages/' . $fileName;
+                // Store as relative path for portability; clients should render with BASE_URL
+                $filePath = 'uploads/messages/' . $fileName;
             }
         }
     }
@@ -125,7 +126,7 @@ try {
         $notificationTitle, 
         $notificationMessage, 
         $notificationData,
-        '/FARMLINK/pages/common/messages.php?conversation=' . $user['id']
+        (defined('BASE_URL') ? BASE_URL : '') . '/pages/common/messages.php?conversation=' . $user['id']
     ]);
     
     $pdo->commit();

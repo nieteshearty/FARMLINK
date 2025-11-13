@@ -231,7 +231,7 @@ if (isset($_GET['edit']) && $_GET['edit']) {
               <img src="<?= htmlspecialchars($fullImageUrl) ?>" 
                    alt="<?= htmlspecialchars($editingProduct['name']) ?>" 
                    class="current-product-pic"
-                   onerror="console.log('Failed to load image:', this.src); this.onerror=null; this.src='/FARMLINK/assets/img/1.jpg';">
+                   onerror="console.log('Failed to load image:', this.src); this.onerror=null; this.src='<?= BASE_URL ?>/assets/img/1.jpg';">
               <label>Current Image</label>
             </div>
           <?php endif; ?>

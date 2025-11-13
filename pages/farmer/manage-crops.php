@@ -76,8 +76,8 @@ $crops = $cropManager->getFarmerCrops($user['id']);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Manage Crops - FarmLink</title>
-    <link rel="stylesheet" href="/FARMLINK/style.css">
-    <link rel="stylesheet" href="/FARMLINK/assets/css/farmer.css">
+    <link rel="stylesheet" href="<?= BASE_URL ?>/style.css">
+    <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/farmer.css">
     <style>
         /* Force agricultural green sidebar background */
         .sidebar {
@@ -199,12 +199,12 @@ $crops = $cropManager->getFarmerCrops($user['id']);
                 <div class="crop-card">
                     <?php 
                     // Display the product image with fallback to placeholder
-                    $imagePath = !empty($crop['image']) ? $crop['image'] : '/FARMLINK/assets/img/placeholder.jpg';
+                    $imagePath = !empty($crop['image']) ? $crop['image'] : (defined('BASE_URL') ? BASE_URL : '') . '/assets/img/placeholder.jpg';
                     ?>
                     <img src="<?= htmlspecialchars($imagePath) ?>" 
                          alt="<?= htmlspecialchars($crop['name']) ?>" 
                          class="crop-image"
-                         onerror="this.onerror=null; this.src='/FARMLINK/assets/img/placeholder.jpg';">
+                         onerror="this.onerror=null; this.src='<?= BASE_URL ?>/assets/img/placeholder.jpg';">
                     
                     <h3><?= htmlspecialchars($crop['name']) ?></h3>
                     <p><?= htmlspecialchars($crop['description']) ?></p>

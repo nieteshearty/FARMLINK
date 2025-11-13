@@ -116,11 +116,11 @@ $systemInfo = [
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <title>FarmLink • System Settings</title>
-    <link rel="icon" type="image/png" href="/FARMLINK/assets/img/farmlink.png">
-    <link rel="stylesheet" href="/FARMLINK/style.css">
-    <link rel="stylesheet" href="/FARMLINK/assets/css/superadmin.css">
-    <link rel="stylesheet" href="/FARMLINK/assets/css/logout-confirmation.css">
-    <link rel="stylesheet" href="/FARMLINK/assets/css/navigation.css">
+    <link rel="icon" type="image/png" href="<?= BASE_URL ?>/assets/img/farmlink.png">
+    <link rel="stylesheet" href="<?= BASE_URL ?>/style.css">
+    <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/superadmin.css">
+    <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/logout-confirmation.css">
+    <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/navigation.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body data-page="settings">
@@ -129,7 +129,7 @@ $systemInfo = [
             <button class="menu-toggle" onclick="toggleSidebar()">
                 <i class="fas fa-bars"></i>
             </button>
-            <img src="/FARMLINK/assets/img/farmlink.png" alt="FARMLINK Logo" class="nav-logo">
+            <img src="<?= BASE_URL ?>/assets/img/farmlink.png" alt="FARMLINK Logo" class="nav-logo">
             <span class="nav-title">Settings</span>
         </div>
         <div class="nav-right">
@@ -138,18 +138,18 @@ $systemInfo = [
                 <?php
                 $profilePicPath = '';
                 if (!empty($user['profile_picture'])) {
-                    if (strpos($user['profile_picture'], '/FARMLINK/') === 0) {
+                    if (strpos($user['profile_picture'], BASE_URL . '/') === 0 || strpos($user['profile_picture'], '/FARMLINK/') === 0) {
                         $profilePicPath = $user['profile_picture'];
                     } elseif (strpos($user['profile_picture'], 'uploads/') === 0) {
-                        $profilePicPath = '/FARMLINK/' . $user['profile_picture'];
+                        $profilePicPath = BASE_URL . '/' . $user['profile_picture'];
                     } else {
-                        $profilePicPath = '/FARMLINK/uploads/profiles/' . basename($user['profile_picture']);
+                        $profilePicPath = BASE_URL . '/uploads/profiles/' . basename($user['profile_picture']);
                     }
                 } else {
-                    $profilePicPath = '/FARMLINK/assets/img/default-avatar.png';
+                    $profilePicPath = BASE_URL . '/assets/img/default-avatar.png';
                 }
                 ?>
-                <img src="<?= $profilePicPath ?>" alt="Profile" class="avatar" onerror="this.src='/FARMLINK/assets/img/default-avatar.png'">
+                <img src="<?= $profilePicPath ?>" alt="Profile" class="avatar" onerror="this.src='<?= BASE_URL ?>/assets/img/default-avatar.png'">
             </div>
         </div>
     </nav>
@@ -162,7 +162,7 @@ $systemInfo = [
         <a href="analytics.php"><i class="fas fa-chart-bar"></i> Analytics & Reports</a>
         <a href="settings.php" class="active"><i class="fas fa-cog"></i> Settings</a>
         <a href="superadmin-profile.php"><i class="fas fa-user"></i> Profile</a>
-        <a href="/FARMLINK/pages/auth/logout.php" class="logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        <a href="<?= BASE_URL ?>/pages/auth/logout.php" class="logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
     </div>
 
     <main class="main">
@@ -523,7 +523,7 @@ $systemInfo = [
             sidebar.classList.toggle('active');
         }
     </script>
-    <script src="/FARMLINK/assets/js/logout-confirmation.js"></script>
+    <script src="<?= BASE_URL ?>/assets/js/logout-confirmation.js"></script>
 </body>
 </html>
 

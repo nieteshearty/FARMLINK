@@ -62,7 +62,8 @@ function showLogoutConfirmation() {
         
         // Redirect to logout after short delay for UX
         setTimeout(() => {
-            window.location.href = '/FARMLINK/pages/auth/logout.php';
+            const target = window._logoutTarget || (document.querySelector('a[href*="logout.php"]')?.href) || '/pages/auth/logout.php';
+            window.location.href = target;
         }, 800);
     });
 

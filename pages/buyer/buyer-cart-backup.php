@@ -153,15 +153,15 @@ foreach ($cartItems as $item) {
 <head>
   <meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
   <title>FarmLink • Shopping Cart</title>
-  <link rel="icon" type="image/png" href="/FARMLINK/assets/img/farmlink.png">
-  <link rel="stylesheet" href="/FARMLINK/style.css">
-  <link rel="stylesheet" href="/FARMLINK/assets/css/buyer.css">
-  <link rel="stylesheet" href="/FARMLINK/assets/css/logout-confirmation.css">
+  <link rel="icon" type="image/png" href="<?= BASE_URL ?>/assets/img/farmlink.png">
+  <link rel="stylesheet" href="<?= BASE_URL ?>/style.css">
+  <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/buyer.css">
+  <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/logout-confirmation.css">
 </head>
 <body data-page="buyer-cart">
   <nav>
     <div class="nav-left">
-      <a href="buyer-dashboard.php"><img src="/FARMLINK/assets/img/farmlink.png" alt="FARMLINK Logo" class="nav-logo"></a>
+      <a href="buyer-dashboard.php"><img src="<?= BASE_URL ?>/assets/img/farmlink.png" alt="FARMLINK Logo" class="nav-logo"></a>
       <span class="brand">FARMLINK</span>
     </div>
     <span>Shopping Cart</span>
@@ -173,7 +173,7 @@ foreach ($cartItems as $item) {
     <a href="buyer-cart.php" class="active">Shopping Cart</a>
     <a href="buyer-orders.php">My Orders</a>
     <a href="buyer-profile.php">Profile</a>
-    <a href="/FARMLINK/pages/auth/logout.php">Logout</a>
+    <a href="<?= BASE_URL ?>/pages/auth/logout.php">Logout</a>
   </div>
 
   <main class="main">
@@ -256,18 +256,18 @@ foreach ($cartItems as $item) {
                           if (strpos($imageValue, 'http') === 0) {
                               // Full URL - use as is
                               $imagePath = $imageValue;
-                          } elseif (strpos($imageValue, '/FARMLINK/') === 0) {
-                              // Already has /FARMLINK/ prefix - use as is
+                          } elseif (strpos($imageValue, BASE_URL . '/') === 0 || strpos($imageValue, '/FARMLINK/') === 0) {
+                              // Already prefixed - use as is
                               $imagePath = $imageValue;
                           } elseif (strpos($imageValue, 'uploads/products/') === 0) {
                               // Relative path starting with uploads/products/
-                              $imagePath = '/FARMLINK/' . $imageValue;
+                              $imagePath = BASE_URL . '/' . $imageValue;
                           } elseif (strpos($imageValue, '/') === 0) {
-                              // Starts with / but no FARMLINK prefix
-                              $imagePath = '/FARMLINK' . $imageValue;
+                              // Starts with / but no prefix
+                              $imagePath = BASE_URL . $imageValue;
                           } else {
                               // Just filename - add full path
-                              $imagePath = '/FARMLINK/uploads/products/' . basename($imageValue);
+                              $imagePath = BASE_URL . '/uploads/products/' . basename($imageValue);
                           }
                       }
                       ?>
@@ -275,7 +275,7 @@ foreach ($cartItems as $item) {
                       <img src="<?= htmlspecialchars($imagePath) ?>" 
                            alt="<?= htmlspecialchars($item['name']) ?>" 
                            class="product-image"
-                           onerror="this.onerror=null; this.src='/FARMLINK/assets/img/placeholder.png';">
+                           onerror="this.onerror=null; this.src='<?= BASE_URL ?>/assets/img/placeholder.png';">
                     <?php else: ?>
                       <div class="product-image-placeholder">📷</div>
                     <?php endif; ?>
@@ -2792,6 +2792,6 @@ foreach ($cartItems as $item) {
     </div>
   </div>
 
-  <script src="/FARMLINK/assets/js/logout-confirmation.js"></script>
+  <script src="<?= BASE_URL ?>/assets/js/logout-confirmation.js"></script>
 </body>
 </html>

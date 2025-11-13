@@ -118,7 +118,8 @@ try {
                     $uploadPath = $uploadDir . $newFileName;
                     
                     if (move_uploaded_file($fileTmp, $uploadPath)) {
-                        $reviewImages[] = '/FARMLINK/uploads/reviews/' . $newFileName;
+                        // Store as relative path; clients render with BASE_URL
+                        $reviewImages[] = 'uploads/reviews/' . $newFileName;
                     }
                 }
             }
@@ -202,7 +203,7 @@ try {
         'New Review Received',
         $user['username'] . ' left a ' . $overallRating . '-star review for ' . $order['product_name'],
         $notificationData,
-        '/FARMLINK/pages/farmer/farmer-products.php?product=' . $productId
+        (defined('BASE_URL') ? BASE_URL : '') . '/pages/farmer/farmer-products.php?product=' . $productId
     ]);
     
     $pdo->commit();

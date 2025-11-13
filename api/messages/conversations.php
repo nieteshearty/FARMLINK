@@ -86,11 +86,21 @@ try {
     
     // Format conversations
     $formattedConversations = array_map(function($conv) {
+        $base = defined('BASE_URL') ? BASE_URL : '';
         // Handle avatar path
         $avatar = $conv['other_avatar'];
-        if ($avatar && !str_starts_with($avatar, 'http')) {
-            if (!str_starts_with($avatar, '/FARMLINK/')) {
-                $avatar = '/FARMLINK/uploads/profiles/' . basename($avatar);
+        if ($avatar) {
+            $v = trim($avatar);
+            if (strpos($v, 'http') === 0) {
+                $avatar = $v;
+            } elseif (strpos($v, $base . '/') === 0 || strpos($v, '/FARMLINK/') === 0) {
+                $avatar = $v;
+            } elseif (strpos($v, 'uploads/') === 0) {
+                $avatar = $base . '/' . $v;
+            } elseif (strpos($v, '/') === 0) {
+                $avatar = $base . $v;
+            } else {
+                $avatar = $base . '/uploads/profiles/' . basename($v);
             }
         }
         
@@ -120,7 +130,7 @@ try {
             'other_user' => [
                 'id' => $conv['other_user_id'],
                 'username' => $conv['other_username'],
-                'avatar' => $avatar ?: '/FARMLINK/assets/img/default-avatar.png',
+                'avatar' => $avatar ?: ($base . '/assets/img/default-avatar.png'),
                 'role' => $conv['other_role'],
                 'is_online' => $isOnline,
                 'last_active' => $conv['other_last_active']

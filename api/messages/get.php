@@ -85,20 +85,20 @@ try {
     
     // Format messages
     $formattedMessages = array_map(function($message) use ($basePath) {
-        // Handle profile picture paths
-        $senderAvatar = $message['sender_avatar'];
-        if ($senderAvatar && !str_starts_with($senderAvatar, 'http')) {
-            if (!str_starts_with($senderAvatar, '/FARMLINK/')) {
-                $senderAvatar = '/FARMLINK/uploads/profiles/' . basename($senderAvatar);
-            }
-        }
-        
-        $receiverAvatar = $message['receiver_avatar'];
-        if ($receiverAvatar && !str_starts_with($receiverAvatar, 'http')) {
-            if (!str_starts_with($receiverAvatar, '/FARMLINK/')) {
-                $receiverAvatar = '/FARMLINK/uploads/profiles/' . basename($receiverAvatar);
-            }
-        }
+        // Handle profile picture paths with BASE_URL
+        $base = defined('BASE_URL') ? BASE_URL : '';
+        $normalizeAvatar = function($avatar) use ($base) {
+            if (empty($avatar)) return '';
+            $v = trim($avatar);
+            if (strpos($v, 'http') === 0) return $v;
+            if (strpos($v, $base . '/') === 0 || strpos($v, '/FARMLINK/') === 0) return $v;
+            if (strpos($v, 'uploads/') === 0) return $base . '/' . $v;
+            if (strpos($v, '/') === 0) return $base . $v;
+            return $base . '/uploads/profiles/' . basename($v);
+        };
+
+        $senderAvatar = $normalizeAvatar($message['sender_avatar'] ?? '');
+        $receiverAvatar = $normalizeAvatar($message['receiver_avatar'] ?? '');
         
         return [
             'id' => $message['id'],
@@ -112,12 +112,12 @@ try {
             'sender' => [
                 'id' => $message['sender_id'],
                 'username' => $message['sender_username'],
-                'avatar' => $senderAvatar ?: '/FARMLINK/assets/img/default-avatar.png'
+                'avatar' => $senderAvatar ?: ($base . '/assets/img/default-avatar.png')
             ],
             'receiver' => [
                 'id' => $message['receiver_id'],
                 'username' => $message['receiver_username'],
-                'avatar' => $receiverAvatar ?: '/FARMLINK/assets/img/default-avatar.png'
+                'avatar' => $receiverAvatar ?: ($base . '/assets/img/default-avatar.png')
             ]
         ];
     }, $messages);
@@ -131,7 +131,16 @@ try {
         'other_user' => [
             'id' => $otherUser['id'],
             'username' => $otherUser['username'],
-            'avatar' => $otherUser['profile_picture'] ?: '/FARMLINK/assets/img/default-avatar.png',
+            'avatar' => (function() use ($otherUser) {
+                $base = defined('BASE_URL') ? BASE_URL : '';
+                $v = $otherUser['profile_picture'] ?? '';
+                if (empty($v)) return $base . '/assets/img/default-avatar.png';
+                if (strpos($v, 'http') === 0) return $v;
+                if (strpos($v, $base . '/') === 0 || strpos($v, '/FARMLINK/') === 0) return $v;
+                if (strpos($v, 'uploads/') === 0) return $base . '/' . $v;
+                if (strpos($v, '/') === 0) return $base . $v;
+                return $base . '/uploads/profiles/' . basename($v);
+            })(),
             'role' => $otherUser['role'],
             'last_active' => $otherUser['last_active'],
             'is_online' => $otherUser['last_active'] && 

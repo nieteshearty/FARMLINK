@@ -53,7 +53,7 @@ try {
             'price' => 30.00,
             'unit' => 'pieces',
             'description' => 'Pet-chay (also spelled petsay) most commonly refers to bok choy. Fresh, crispy leaves perfect for stir-fry and soups.',
-            'image' => '/FARMLINK/assets/img/products/petchay.png'
+            'image' => '/assets/img/products/petchay.png'
         ],
         [
             'name' => 'Onion',
@@ -62,7 +62,7 @@ try {
             'price' => 200.00,
             'unit' => 'kg',
             'description' => 'The onion (scientific name: Allium cepa) is a bulbous vegetable. Fresh, pungent onions perfect for cooking.',
-            'image' => '/FARMLINK/assets/img/products/onion.png'
+            'image' => '/assets/img/products/onion.png'
         ],
         [
             'name' => 'Garlic',
@@ -71,7 +71,7 @@ try {
             'price' => 100.00,
             'unit' => 'kg',
             'description' => 'Garlic (scientific name: Allium sativum) is a species in the onion genus. Fresh, aromatic garlic cloves.',
-            'image' => '/FARMLINK/assets/img/products/garlic.png'
+            'image' => '/assets/img/products/garlic.png'
         ],
         [
             'name' => 'Luya',
@@ -80,7 +80,7 @@ try {
             'price' => 10.00,
             'unit' => 'pieces',
             'description' => 'Luya (scientific name: Zingiber officinale) is the rhizome of the flowering plant. Fresh ginger root with spicy flavor.',
-            'image' => '/FARMLINK/assets/img/products/luya.png'
+            'image' => '/assets/img/products/luya.png'
         ],
         [
             'name' => 'Mani',
@@ -89,7 +89,7 @@ try {
             'price' => 20.00,
             'unit' => 'lbs',
             'description' => 'Despite their name, peanuts are not true nuts. Botanically, they are legumes. Fresh, crunchy peanuts.',
-            'image' => '/FARMLINK/assets/img/products/mani.png'
+            'image' => '/assets/img/products/mani.png'
         ],
         [
             'name' => 'Papaya',
@@ -98,7 +98,7 @@ try {
             'price' => 120.00,
             'unit' => 'kg',
             'description' => 'Fresh, sweet papaya fruit. Rich in vitamins and perfect for healthy snacks and smoothies.',
-            'image' => '/FARMLINK/assets/img/products/papaya.png'
+            'image' => '/assets/img/products/papaya.png'
         ],
         [
             'name' => 'Cauliflower',
@@ -107,7 +107,7 @@ try {
             'price' => 250.00,
             'unit' => 'kg',
             'description' => 'Cauliflower is one of several vegetables cultivated from the species Brassica oleracea. Fresh, white florets perfect for cooking.',
-            'image' => '/FARMLINK/assets/img/products/cauliflower.png'
+            'image' => '/assets/img/products/cauliflower.png'
         ]
     ];
     

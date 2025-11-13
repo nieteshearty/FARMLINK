@@ -48,7 +48,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 
                 // In a real application, you would send an email here
                 // For demo purposes, we'll redirect directly to reset page
-                $resetLink = "/FARMLINK/pages/auth/reset-password.php?token=" . urlencode($resetToken);
+                $resetLink = (defined('BASE_URL') ? BASE_URL : '') . "/pages/auth/reset-password.php?token=" . urlencode($resetToken);
                 
                 // Set success flag for JavaScript redirect
                 $success = true;
@@ -74,13 +74,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Forgot Password - FARMLINK</title>
-    <link rel="icon" type="image/png" href="/FARMLINK/assets/img/farmlink.png">
-    <link rel="stylesheet" href="/FARMLINK/assets/css/auth.css">
+    <link rel="icon" type="image/png" href="<?= BASE_URL ?>/assets/img/farmlink.png">
+    <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/auth.css">
 </head>
 <body>
     <div class="login-container">
         <div class="logo-container">
-            <img src="/FARMLINK/assets/img/farmlink.png" alt="FARMLINK" class="logo">
+            <img src="<?= BASE_URL ?>/assets/img/farmlink.png" alt="FARMLINK" class="logo">
         </div>
         
         <h1>Forgot Password</h1>
@@ -125,7 +125,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </button>
                 
                 <div class="signup-link">
-                    Remember your password? <a href="/FARMLINK/pages/auth/login.php">Back to Login</a>
+                    Remember your password? <a href="<?= BASE_URL ?>/pages/auth/login.php">Back to Login</a>
                 </div>
             </form>
         <?php endif; ?>

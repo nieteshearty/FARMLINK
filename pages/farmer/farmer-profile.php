@@ -2067,6 +2067,6 @@ function searchLocation(customQuery = null, isAutoSearch = false) {
 }
 </script>
 
-<script src="/FARMLINK/assets/js/logout-confirmation.js"></script>
+<script src="<?= BASE_URL ?>/assets/js/logout-confirmation.js"></script>
 </body>
 </html>

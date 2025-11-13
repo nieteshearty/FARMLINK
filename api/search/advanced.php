@@ -191,21 +191,21 @@ try {
     
     // Format products
     $formattedProducts = array_map(function($product) {
+        $base = defined('BASE_URL') ? BASE_URL : '';
+        $normalize = function($v, $type = 'products') use ($base) {
+            if (empty($v)) return '';
+            $v = trim($v);
+            if (strpos($v, 'http') === 0) return $v;
+            if (strpos($v, $base . '/') === 0 || strpos($v, '/FARMLINK/') === 0) return $v;
+            if (strpos($v, 'uploads/') === 0) return $base . '/' . $v;
+            if (strpos($v, '/') === 0) return $base . $v;
+            return $base . '/uploads/' . $type . '/' . basename($v);
+        };
         // Handle image path
-        $imagePath = $product['image'];
-        if ($imagePath && !str_starts_with($imagePath, 'http')) {
-            if (!str_starts_with($imagePath, '/FARMLINK/')) {
-                $imagePath = '/FARMLINK/uploads/products/' . basename($imagePath);
-            }
-        }
+        $imagePath = $normalize($product['image'] ?? '', 'products');
         
         // Handle farmer avatar
-        $farmerAvatar = $product['farmer_avatar'];
-        if ($farmerAvatar && !str_starts_with($farmerAvatar, 'http')) {
-            if (!str_starts_with($farmerAvatar, '/FARMLINK/')) {
-                $farmerAvatar = '/FARMLINK/uploads/profiles/' . basename($farmerAvatar);
-            }
-        }
+        $farmerAvatar = $normalize($product['farmer_avatar'] ?? '', 'profiles');
         
         return [
             'id' => $product['id'],
@@ -220,7 +220,7 @@ try {
             'is_organic' => (bool)$product['is_organic'],
             'harvest_date' => $product['harvest_date'],
             'expiry_date' => $product['expiry_date'],
-            'image' => $imagePath ?: '/FARMLINK/assets/img/product-placeholder.svg',
+            'image' => $imagePath ?: ($base . '/assets/img/product-placeholder.svg'),
             'average_rating' => floatval($product['average_rating']),
             'total_reviews' => intval($product['total_reviews']),
             'total_sales' => intval($product['total_sales']),
@@ -231,7 +231,7 @@ try {
                 'username' => $product['farmer_name'],
                 'farm_name' => $product['farm_name'],
                 'location' => trim(($product['farmer_city'] ?? '') . ' ' . ($product['farmer_province'] ?? '')),
-                'avatar' => $farmerAvatar ?: '/FARMLINK/assets/img/default-avatar.png',
+                'avatar' => $farmerAvatar ?: ($base . '/assets/img/default-avatar.png'),
                 'rating' => floatval($product['farmer_rating'])
             ],
             'created_at' => $product['created_at'],
