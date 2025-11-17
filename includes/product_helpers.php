@@ -25,11 +25,24 @@ function displayProductImage($imagePath, $altText = 'Product Image', $attributes
     }
     
     // If no image path is provided, use placeholder
-    if (empty($imagePath) || !file_exists($_SERVER['DOCUMENT_ROOT'] . parse_url($imagePath, PHP_URL_PATH))) {
-        $imagePath = (defined('BASE_URL') ? BASE_URL : '') . '/assets/img/placeholder.jpg';
+    $base = defined('BASE_URL') ? BASE_URL : '';
+    $normalizedPath = $imagePath;
+    if (!empty($normalizedPath)) {
+        $pathOnly = parse_url($normalizedPath, PHP_URL_PATH) ?? '';
+        if (preg_match('#^/[^/]+/(uploads/.*)$#', $pathOnly, $matches)) {
+            $normalizedPath = $base . '/' . $matches[1];
+        } elseif (strpos($normalizedPath, 'uploads/') === 0) {
+            $normalizedPath = $base . '/' . $normalizedPath;
+        } elseif ($pathOnly && file_exists($_SERVER['DOCUMENT_ROOT'] . $pathOnly) === false) {
+            $normalizedPath = '';
+        }
+    }
+
+    if (empty($normalizedPath) || !file_exists($_SERVER['DOCUMENT_ROOT'] . (parse_url($normalizedPath, PHP_URL_PATH) ?? ''))) {
+        $normalizedPath = $base . '/assets/img/placeholder.jpg';
     }
     
-    return '<img src="' . htmlspecialchars($imagePath, ENT_QUOTES) . '" alt="' . htmlspecialchars($altText) . '"' . $attrString . '>';
+    return '<img src="' . htmlspecialchars($normalizedPath, ENT_QUOTES) . '" alt="' . htmlspecialchars($altText) . '"' . $attrString . '>';
 }
 
 /**
@@ -39,7 +52,7 @@ function displayProductImage($imagePath, $altText = 'Product Image', $attributes
  * @param string $uploadDir Directory to upload to (relative to document root)
  * @return string|bool Path to the uploaded file or false on failure
  */
-function handleImageUpload($file, $uploadDir = '/FARMLINK/uploads/products/') {
+function handleImageUpload($file, $uploadDir = '/uploads/products/') {
     $targetDir = $_SERVER['DOCUMENT_ROOT'] . $uploadDir;
     
     // Create directory if it doesn't exist
@@ -68,7 +81,7 @@ function handleImageUpload($file, $uploadDir = '/FARMLINK/uploads/products/') {
     
     // Move the uploaded file
     if (move_uploaded_file($file['tmp_name'], $targetPath)) {
-        return $uploadDir . $filename;
+        return ltrim($uploadDir, '/') . $filename;
     }
     
     return false;
@@ -83,8 +96,9 @@ function handleImageUpload($file, $uploadDir = '/FARMLINK/uploads/products/') {
 function deleteProductImage($imagePath) {
     $fullPath = $_SERVER['DOCUMENT_ROOT'] . parse_url($imagePath, PHP_URL_PATH);
     
-    // Don't delete the placeholder image
-    if (strpos($fullPath, '/FARMLINK/assets/img/placeholder.jpg') !== false) {
+    $base = defined('BASE_URL') ? BASE_URL : '';
+    $placeholderPath = $base . '/assets/img/placeholder.jpg';
+    if (parse_url($imagePath, PHP_URL_PATH) === parse_url($placeholderPath, PHP_URL_PATH)) {
         return true;
     }
     

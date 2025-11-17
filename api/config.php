@@ -22,13 +22,18 @@ if (!defined('BASE_URL')) {
     } else {
         $scriptName = $_SERVER['SCRIPT_NAME'] ?? '';
         $dir = rtrim(str_replace('\\', '/', dirname($scriptName)), '/');
-        // If script is under /pages/... or /api/... then base is the parent segment (project root),
-        // otherwise fall back to '' (web root) when directly under root.
-        if (preg_match('#^(.+?)/(?:pages|api)(?:/|$)#', $dir, $m)) {
+
+        // Default to trimmed directory ('' when root)
+        $base = ($dir === '/' ? '' : $dir);
+
+        // If script lives directly under /pages or /api, serve from web root
+        if (str_starts_with($dir, '/pages') || str_starts_with($dir, '/api')) {
+            $base = '';
+        } elseif (preg_match('#^(.+?)/(?:pages|api)(?:/|$)#', $dir, $m)) {
+            // For installations like /FARMLINK/pages/... capture parent segment
             $base = rtrim($m[1], '/');
-        } else {
-            $base = ($dir === '/' ? '' : $dir);
         }
+
         define('BASE_URL', $base);
     }
 }

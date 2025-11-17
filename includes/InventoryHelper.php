@@ -251,7 +251,7 @@ class InventoryHelper {
                 $alertMessages[$alertType],
                 $message,
                 $notificationData,
-                '/FARMLINK/pages/farmer/farmer-products.php?product=' . $productId
+                (defined('BASE_URL') ? BASE_URL : '') . '/pages/farmer/farmer-products.php?product=' . $productId
             ]);
             
         } catch (Exception $e) {

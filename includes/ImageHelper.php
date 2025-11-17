@@ -22,11 +22,18 @@ class ImageHelper {
         $imageValue = trim($imagePath);
         $base = defined('BASE_URL') ? BASE_URL : '';
         
+        // Normalize legacy prefixes like /FOLDER/uploads/... or /FOLDER/assets/...
+        if (preg_match('#^/[^/]+/(uploads/.*)$#', $imageValue, $matches)) {
+            $imageValue = '/' . $matches[1];
+        } elseif (preg_match('#^/[^/]+/(assets/.*)$#', $imageValue, $assetMatches)) {
+            $imageValue = '/' . $assetMatches[1];
+        }
+        
         // Handle different path formats
         if (strpos($imageValue, 'http') === 0) {
             // Full URL - use as is
             return $imageValue;
-        } elseif (strpos($imageValue, $base . '/') === 0 || strpos($imageValue, '/FARMLINK/') === 0) {
+        } elseif (strpos($imageValue, $base . '/') === 0) {
             // Already has site prefix - use as is
             return $imageValue;
         } elseif (strpos($imageValue, "uploads/{$type}/") === 0) {

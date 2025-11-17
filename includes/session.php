@@ -43,7 +43,8 @@ class SessionManager {
     
     public static function requireLogin() {
         if (!self::isLoggedIn()) {
-            header('Location: login.php');
+            $base = defined('BASE_URL') ? BASE_URL : '';
+            header('Location: ' . $base . '/pages/auth/login.php');
             exit;
         }
     }
@@ -59,7 +60,8 @@ class SessionManager {
         
         // Normal role check for other users
         if ($userRole !== $role) {
-            header('Location: /FARMLINK/pages/auth/unauthorized.php');
+            $base = defined('BASE_URL') ? BASE_URL : '';
+            header('Location: ' . $base . '/pages/auth/unauthorized.php');
             exit;
         }
         return self::getUser();
@@ -84,7 +86,8 @@ class SessionManager {
     
     public static function logout() {
         session_destroy();
-        header('Location: login.php');
+        $base = defined('BASE_URL') ? BASE_URL : '';
+        header('Location: ' . $base . '/pages/auth/login.php');
         exit;
     }
     

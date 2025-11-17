@@ -6,6 +6,7 @@ $basePath = dirname(dirname(__DIR__));
 require $basePath . '/api/config.php';
 require $basePath . '/includes/session.php';
 require $basePath . '/includes/DatabaseHelper.php';
+require $basePath . '/includes/ImageHelper.php';
 
 // Require superadmin role
 $user = SessionManager::requireRole('superadmin');
@@ -136,16 +137,8 @@ if (isset($_GET['success'])) {
             <div class="user-menu">
                 <span class="welcome">Welcome, <?= htmlspecialchars($user['username']) ?></span>
                 <?php
-                $profilePicPath = '';
-                if (!empty($user['profile_picture'])) {
-                    if (strpos($user['profile_picture'], BASE_URL . '/') === 0 || strpos($user['profile_picture'], '/FARMLINK/') === 0) {
-                        $profilePicPath = $user['profile_picture'];
-                    } elseif (strpos($user['profile_picture'], 'uploads/') === 0) {
-                        $profilePicPath = BASE_URL . '/' . $user['profile_picture'];
-                    } else {
-                        $profilePicPath = BASE_URL . '/uploads/profiles/' . basename($user['profile_picture']);
-                    }
-                } else {
+                $profilePicPath = ImageHelper::normalizeImagePath($user['profile_picture'] ?? '', 'profiles');
+                if (empty($profilePicPath)) {
                     $profilePicPath = BASE_URL . '/assets/img/default-avatar.png';
                 }
                 ?>
@@ -237,28 +230,14 @@ if (isset($_GET['success'])) {
                                 <tr>
                                     <td>
                                         <div class="product-info">
-                                            <?php if ($product['image']): ?>
-                                                <?php
-                                                // Robust image path handling
-                                                $imageValue = trim($product['image']);
-                                                $imageUrl = '';
-                                                
-                                                if (strpos($imageValue, 'http') === 0) {
-                                                    $imageUrl = $imageValue;
-                                                } elseif (strpos($imageValue, BASE_URL . '/') === 0 || strpos($imageValue, '/FARMLINK/') === 0) {
-                                                    $imageUrl = $imageValue;
-                                                } elseif (strpos($imageValue, 'uploads/products/') === 0) {
-                                                    $imageUrl = BASE_URL . '/' . $imageValue;
-                                                } elseif (strpos($imageValue, '/') === 0) {
-                                                    $imageUrl = BASE_URL . $imageValue;
-                                                } else {
-                                                    $imageUrl = BASE_URL . '/uploads/products/' . basename($imageValue);
-                                                }
-                                                ?>
+                                            <?php
+                                            $imageUrl = ImageHelper::normalizeImagePath($product['image'] ?? '', 'products');
+                                            if (!empty($imageUrl)):
+                                            ?>
                                                 <img src="<?= htmlspecialchars($imageUrl) ?>" 
                                                      alt="<?= htmlspecialchars($product['name']) ?>" 
                                                      class="product-thumb"
-                                                     onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                                     onerror="this.onerror=null; this.style.display='none'; this.nextElementSibling.style.display='flex';">
                                                 <div class="product-thumb-placeholder" style="display: none;">
                                                     <i class="fas fa-image"></i>
                                                 </div>
@@ -280,16 +259,7 @@ if (isset($_GET['success'])) {
                                     <td>
                                         <div class="farmer-info">
                                             <?php
-                                            $farmerPicPath = '';
-                                            if (!empty($product['farmer_avatar'])) {
-                                                if (strpos($product['farmer_avatar'], BASE_URL . '/') === 0 || strpos($product['farmer_avatar'], '/FARMLINK/') === 0) {
-                                                    $farmerPicPath = $product['farmer_avatar'];
-                                                } elseif (strpos($product['farmer_avatar'], 'uploads/') === 0) {
-                                                    $farmerPicPath = BASE_URL . '/' . $product['farmer_avatar'];
-                                                } else {
-                                                    $farmerPicPath = BASE_URL . '/uploads/profiles/' . basename($product['farmer_avatar']);
-                                                }
-                                            }
+                                            $farmerPicPath = ImageHelper::normalizeImagePath($product['farmer_avatar'] ?? '', 'profiles');
                                             ?>
                                             <?php if ($farmerPicPath): ?>
                                                 <img src="<?= $farmerPicPath ?>" alt="Farmer" class="farmer-thumb" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">

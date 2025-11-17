@@ -50,27 +50,49 @@ try {
         $base = defined('BASE_URL') ? BASE_URL : '';
         $imagePath = $base . '/assets/img/product-placeholder.svg'; // Default
         if (!empty($product['image'])) {
-            $image = $product['image'];
+            $image = trim($product['image']);
             
             // Handle different image path formats
             if (strpos($image, 'http') === 0) {
                 // Full URL
                 $imagePath = $image;
-            } elseif (strpos($image, $base . '/') === 0 || strpos($image, '/FARMLINK/') === 0) {
-                // Already has FARMLINK prefix
+            } elseif (strpos($image, $base . '/') === 0) {
+                // Already has BASE_URL prefix
                 $imagePath = $image;
             } elseif (strpos($image, 'uploads/') === 0) {
-                // Relative path from FARMLINK root
+                // Relative path from project root
                 $imagePath = $base . '/' . $image;
             } elseif (strpos($image, '/uploads/') === 0) {
                 // Absolute path from server root
                 $imagePath = $base . $image;
+            } elseif (preg_match('#^/[^/]+/(uploads/.*)$#', $image, $matches)) {
+                // Legacy prefix like /FOLDER/uploads/...
+                $imagePath = $base . '/' . $matches[1];
             } else {
                 // Just filename, assume it's in products folder
-                $imagePath = $base . '/uploads/products/' . $image;
+                $imagePath = $base . '/uploads/products/' . basename($image);
             }
         }
         
+        // Normalize farmer avatar
+        $farmerImage = $base . '/assets/img/default-avatar.png';
+        if (!empty($product['farmer_image'])) {
+            $avatar = trim($product['farmer_image']);
+            if (strpos($avatar, 'http') === 0) {
+                $farmerImage = $avatar;
+            } elseif (strpos($avatar, $base . '/') === 0) {
+                $farmerImage = $avatar;
+            } elseif (strpos($avatar, 'uploads/') === 0) {
+                $farmerImage = $base . '/' . $avatar;
+            } elseif (strpos($avatar, '/uploads/') === 0) {
+                $farmerImage = $base . $avatar;
+            } elseif (preg_match('#^/[^/]+/(uploads/.*)$#', $avatar, $matchAvatar)) {
+                $farmerImage = $base . '/' . $matchAvatar[1];
+            } else {
+                $farmerImage = $base . '/uploads/profiles/' . basename($avatar);
+            }
+        }
+
         // Determine category badge
         $category = ucfirst($product['category'] ?? 'Fresh');
         
@@ -85,7 +107,7 @@ try {
             'category' => $category,
             'image_url' => $imagePath,
             'farmer_name' => $product['farmer_name'] ?? 'Local Farmer',
-            'farmer_image' => $product['farmer_image'] ?? ($base . '/assets/img/default-avatar.png'),
+            'farmer_image' => $farmerImage,
             'status' => $product['status']
         ];
     }
@@ -103,7 +125,7 @@ try {
                 'category' => 'Vegetables',
                 'image_url' => 'https://images.unsplash.com/photo-1515543237350-b3eea1ec8082?w=400&h=300&fit=crop&auto=format',
                 'farmer_name' => 'Local Farmer',
-                'farmer_image' => '/FARMLINK/assets/img/default-avatar.png',
+                'farmer_image' => $base . '/assets/img/default-avatar.png',
                 'status' => 'active'
             ],
             [
@@ -116,7 +138,7 @@ try {
                 'category' => 'Vegetables',
                 'image_url' => 'https://images.unsplash.com/photo-1518977676601-b53f82aba655?w=400&h=300&fit=crop&auto=format',
                 'farmer_name' => 'Local Farmer',
-                'farmer_image' => '/FARMLINK/assets/img/default-avatar.png',
+                'farmer_image' => $base . '/assets/img/default-avatar.png',
                 'status' => 'active'
             ],
             [
@@ -129,7 +151,7 @@ try {
                 'category' => 'Vegetables',
                 'image_url' => 'https://images.unsplash.com/photo-1553978297-833d24758027?w=400&h=300&fit=crop&auto=format',
                 'farmer_name' => 'Local Farmer',
-                'farmer_image' => '/FARMLINK/assets/img/default-avatar.png',
+                'farmer_image' => $base . '/assets/img/default-avatar.png',
                 'status' => 'active'
             ],
             [
@@ -142,7 +164,7 @@ try {
                 'category' => 'Vegetables',
                 'image_url' => 'https://images.unsplash.com/photo-1599909533730-4c8e6a3f6e0e?w=400&h=300&fit=crop&auto=format',
                 'farmer_name' => 'Local Farmer',
-                'farmer_image' => '/FARMLINK/assets/img/default-avatar.png',
+                'farmer_image' => $base . '/assets/img/default-avatar.png',
                 'status' => 'active'
             ],
             [
@@ -181,7 +203,7 @@ try {
                 'category' => 'Vegetables',
                 'image_url' => 'https://images.unsplash.com/photo-1568584711271-946d4d46b7d5?w=400&h=300&fit=crop&auto=format',
                 'farmer_name' => 'Local Farmer',
-                'farmer_image' => '/FARMLINK/assets/img/default-avatar.png',
+                'farmer_image' => $base . '/assets/img/default-avatar.png',
                 'status' => 'active'
             ]
         ];

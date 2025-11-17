@@ -84,14 +84,17 @@ try {
     $otherUser = $stmt->fetch();
     
     // Format messages
-    $formattedMessages = array_map(function($message) use ($basePath) {
+    $formattedMessages = array_map(function($message) {
         // Handle profile picture paths with BASE_URL
         $base = defined('BASE_URL') ? BASE_URL : '';
         $normalizeAvatar = function($avatar) use ($base) {
             if (empty($avatar)) return '';
             $v = trim($avatar);
             if (strpos($v, 'http') === 0) return $v;
-            if (strpos($v, $base . '/') === 0 || strpos($v, '/FARMLINK/') === 0) return $v;
+            if (preg_match('#^/[^/]+/(uploads/.*)$#', $v, $matches)) {
+                return $base . '/' . $matches[1];
+            }
+            if (strpos($v, $base . '/') === 0) return $v;
             if (strpos($v, 'uploads/') === 0) return $base . '/' . $v;
             if (strpos($v, '/') === 0) return $base . $v;
             return $base . '/uploads/profiles/' . basename($v);
@@ -133,10 +136,13 @@ try {
             'username' => $otherUser['username'],
             'avatar' => (function() use ($otherUser) {
                 $base = defined('BASE_URL') ? BASE_URL : '';
-                $v = $otherUser['profile_picture'] ?? '';
+                $v = trim($otherUser['profile_picture'] ?? '');
                 if (empty($v)) return $base . '/assets/img/default-avatar.png';
                 if (strpos($v, 'http') === 0) return $v;
-                if (strpos($v, $base . '/') === 0 || strpos($v, '/FARMLINK/') === 0) return $v;
+                if (preg_match('#^/[^/]+/(uploads/.*)$#', $v, $matches)) {
+                    return $base . '/' . $matches[1];
+                }
+                if (strpos($v, $base . '/') === 0) return $v;
                 if (strpos($v, 'uploads/') === 0) return $base . '/' . $v;
                 if (strpos($v, '/') === 0) return $base . $v;
                 return $base . '/uploads/profiles/' . basename($v);
