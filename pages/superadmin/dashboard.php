@@ -6,6 +6,7 @@ $basePath = dirname(dirname(__DIR__));
 require $basePath . '/api/config.php';
 require $basePath . '/includes/session.php';
 require $basePath . '/includes/DatabaseHelper.php';
+require $basePath . '/includes/ImageHelper.php';
 
 // Require super admin role
 $user = SessionManager::requireRole('superadmin');
@@ -88,16 +89,8 @@ $topProducts = $pdo->query("
             <div class="user-menu">
                 <span class="welcome">Welcome, <?= htmlspecialchars($user['username']) ?></span>
                 <?php
-                $profilePicPath = '';
-                if (!empty($user['profile_picture'])) {
-                    if (strpos($user['profile_picture'], BASE_URL . '/') === 0 || strpos($user['profile_picture'], '/FARMLINK/') === 0) {
-                        $profilePicPath = $user['profile_picture'];
-                    } elseif (strpos($user['profile_picture'], 'uploads/') === 0) {
-                        $profilePicPath = BASE_URL . '/' . $user['profile_picture'];
-                    } else {
-                        $profilePicPath = BASE_URL . '/uploads/profiles/' . basename($user['profile_picture']);
-                    }
-                } else {
+                $profilePicPath = ImageHelper::normalizeImagePath($user['profile_picture'] ?? '', 'profiles');
+                if (empty($profilePicPath)) {
                     $profilePicPath = BASE_URL . '/assets/img/default-avatar.png';
                 }
                 ?>

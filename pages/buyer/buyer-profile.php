@@ -5,6 +5,7 @@ $basePath = dirname(dirname(__DIR__));  // Go up two levels to reach FARMLINK di
 // Include required files
 require $basePath . '/api/config.php';
 require $basePath . '/includes/session.php';
+require $basePath . '/includes/ImageHelper.php';
 
 // Require buyer role
 $user = SessionManager::requireRole('buyer');
@@ -20,8 +21,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $newPassword = $_POST['new_password'] ?? '';
     
     // Handle profile picture upload
+    $profilePicture = $user['profile_picture'] ?? '';
     if (isset($_FILES['profile_picture']) && $_FILES['profile_picture']['error'] === UPLOAD_ERR_OK) {
-        $uploadDir = $_SERVER['DOCUMENT_ROOT'] . '/uploads/profiles/';
+        $uploadDir = rtrim($_SERVER['DOCUMENT_ROOT'], '/') . '/uploads/profiles/';
         
         // Ensure upload directory exists and is writable
         if (!is_dir($uploadDir)) {
@@ -57,8 +59,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } else {
             $_SESSION['error'] = 'Invalid file type. Only JPG, JPEG, PNG & GIF files are allowed.';
         }
-    } else {
-        $profilePicture = $user['profile_picture']; // Keep existing if no new upload
     }
     
     try {
@@ -151,21 +151,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <h3>Profile Picture</h3>
         <div class="profile-upload">
           <div class="current-profile">
-            <?php 
-            $profilePic = $user['profile_picture'];
-            if (!empty($profilePic)): 
-                // If it's a full path, use it directly, otherwise construct the path
-                if (strpos($profilePic, 'http') === 0) {
-                    $imgSrc = $profilePic;
-                } elseif (strpos($profilePic, '/') === 0) {
-                    $imgSrc = BASE_URL . $profilePic;
-                } else {
-                    $imgSrc = BASE_URL . '/uploads/profiles/' . $profilePic;
-                }
+            <?php
+              $currentProfilePic = ImageHelper::normalizeImagePath($user['profile_picture'] ?? '', 'profiles');
             ?>
-              <img src="<?= htmlspecialchars($imgSrc) ?>" 
-                   alt="Profile Picture" 
-                   onerror="this.onerror=null; this.src='<?= BASE_URL ?>/assets/img/default-avatar.png';" 
+            <?php if (!empty($currentProfilePic)): ?>
+              <img src="<?= htmlspecialchars($currentProfilePic) ?>"
+                   alt="Profile Picture"
+                   onerror="this.onerror=null; this.src='<?= BASE_URL ?>/assets/img/default-avatar.png';"
                    class="current-pic">
             <?php else: ?>
               <div class="profile-pic-default current-pic">
@@ -255,7 +247,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   </style>
   
   <?php
-  $uploadDir = $_SERVER['DOCUMENT_ROOT'] . '/FARMLINK/uploads/profiles/';
+  $uploadDir = rtrim($_SERVER['DOCUMENT_ROOT'], '/') . '/uploads/profiles/';
   if (!is_dir($uploadDir)) {
       mkdir($uploadDir, 0755, true);
   }

@@ -5,6 +5,7 @@ $basePath = dirname(dirname(__DIR__));  // Go up two levels to reach FARMLINK di
 // Include required files
 require $basePath . '/api/config.php';
 require $basePath . '/includes/session.php';
+require $basePath . '/includes/ImageHelper.php';
 
 // Require buyer role
 $user = SessionManager::requireRole('buyer');
@@ -135,44 +136,28 @@ if ($farmerId) {
         <?php foreach ($filteredProducts as $product): ?>
           <div class="market-card">
             <?php
-            // Handle product image display with fallback (filesystem check + BASE_URL for web)
-            $imagePath = '';
-            $hasImage = false;
-            
-            if (!empty($product['image'])) {
-                $imgVal = trim($product['image']);
-                $baseFilename = basename($imgVal);
-                $uploadsFs = '/uploads/products/';
-                $uploadsWeb = BASE_URL . '/uploads/products/';
-                
-                if (strpos($imgVal, 'http') === 0) {
-                    $imagePath = $imgVal;
-                    $hasImage = true;
-                } elseif (file_exists($_SERVER['DOCUMENT_ROOT'] . $uploadsFs . $baseFilename)) {
-                    $imagePath = $uploadsWeb . $baseFilename;
-                    $hasImage = true;
-                } elseif (strpos($imgVal, '/') === 0 && file_exists($_SERVER['DOCUMENT_ROOT'] . $imgVal)) {
-                    $imagePath = BASE_URL . $imgVal;
-                    $hasImage = true;
-                } elseif (strpos($imgVal, 'uploads/') === 0 && file_exists($_SERVER['DOCUMENT_ROOT'] . '/' . $imgVal)) {
-                    $imagePath = BASE_URL . '/' . $imgVal;
-                    $hasImage = true;
-                }
-            }
-            
-            // Create a data URI for the placeholder
-            $placeholderSvg = 'data:image/svg+xml;base64,' . base64_encode('<svg width="200" height="200" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><rect width="100%" height="100%" fill="#f5f5f5"/><text x="50%" y="50%" font-family="Arial" font-size="14" text-anchor="middle" dominant-baseline="middle" fill="#999">No Image</text></svg>');
+              $placeholder = BASE_URL . '/assets/img/product-placeholder.svg';
+              $imageUrl = ImageHelper::normalizeImagePath($product['image'] ?? '', 'products');
             ?>
-            
             <div class="product-image">
+              <?php if (!empty($imageUrl)): ?>
                 <img 
-                    src="<?= $hasImage ? htmlspecialchars($imagePath) : $placeholderSvg ?>" 
-                    alt="<?= htmlspecialchars($product['name']) ?>"
-                    class="product-thumb"
-                    onerror="this.onerror=null; this.src='<?= $placeholderSvg ?>'"
-                    loading="lazy"
-                    style="width: 100%; height: 200px; object-fit: cover;"
+                  src="<?= htmlspecialchars($imageUrl) ?>"
+                  alt="<?= htmlspecialchars($product['name']) ?>"
+                  class="product-thumb"
+                  loading="lazy"
+                  style="width: 100%; height: 200px; object-fit: cover;"
+                  onerror="this.onerror=null; this.src='<?= htmlspecialchars($placeholder) ?>';"
                 >
+              <?php else: ?>
+                <img 
+                  src="<?= htmlspecialchars($placeholder) ?>"
+                  alt="<?= htmlspecialchars($product['name']) ?>"
+                  class="product-thumb"
+                  loading="lazy"
+                  style="width: 100%; height: 200px; object-fit: cover;"
+                >
+              <?php endif; ?>
             </div>
             <div class="product-details">
               <h3><?= htmlspecialchars($product['name']) ?></h3>
@@ -398,6 +383,6 @@ if ($farmerId) {
       padding: 40px 0;
     }
   </style>
-  <script src="/FARMLINK/assets/js/logout-confirmation.js"></script>
+  <script src="<?= BASE_URL ?>/assets/js/logout-confirmation.js"></script>
 </body>
 </html>

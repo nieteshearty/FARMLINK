@@ -6,6 +6,7 @@ $basePath = dirname(dirname(__DIR__));  // Go up two levels to reach FARMLINK di
 require $basePath . '/api/config.php';
 require $basePath . '/includes/session.php';
 require $basePath . '/includes/DatabaseHelper.php';
+require $basePath . '/includes/ImageHelper.php';
 
 // Require farmer role
 $user = SessionManager::requireRole('farmer');
@@ -211,22 +212,8 @@ if (isset($_GET['edit']) && $_GET['edit']) {
           <label for="productImage">Product Image</label>
           <?php if ($editingProduct && $editingProduct['image']): ?>
             <div class="current-image">
-              <?php 
-                // Robust image path handling for edit form
-                $imageValue = trim($editingProduct['image']);
-                $fullImageUrl = '';
-                
-                if (strpos($imageValue, 'http') === 0) {
-                    $fullImageUrl = $imageValue;
-                } elseif (strpos($imageValue, BASE_URL . '/') === 0 || strpos($imageValue, '/FARMLINK/') === 0) {
-                    $fullImageUrl = $imageValue;
-                } elseif (strpos($imageValue, 'uploads/products/') === 0) {
-                    $fullImageUrl = BASE_URL . '/' . $imageValue;
-                } elseif (strpos($imageValue, '/') === 0) {
-                    $fullImageUrl = BASE_URL . $imageValue;
-                } else {
-                    $fullImageUrl = BASE_URL . '/uploads/products/' . basename($imageValue);
-                }
+              <?php
+                $fullImageUrl = ImageHelper::normalizeImagePath($editingProduct['image'] ?? '', 'products');
               ?>
               <img src="<?= htmlspecialchars($fullImageUrl) ?>" 
                    alt="<?= htmlspecialchars($editingProduct['name']) ?>" 
@@ -312,22 +299,7 @@ if (isset($_GET['edit']) && $_GET['edit']) {
                 <td>
                   <div class="product-info">
                     <?php if ($product['image']): ?>
-                      <?php
-                        $imageValue = trim($product['image']);
-                        $fullImageUrl = '';
-                        
-                        if (strpos($imageValue, 'http') === 0) {
-                            $fullImageUrl = $imageValue;
-                        } elseif (strpos($imageValue, BASE_URL . '/') === 0 || strpos($imageValue, '/FARMLINK/') === 0) {
-                            $fullImageUrl = $imageValue;
-                        } elseif (strpos($imageValue, 'uploads/products/') === 0) {
-                            $fullImageUrl = BASE_URL . '/' . $imageValue;
-                        } elseif (strpos($imageValue, '/') === 0) {
-                            $fullImageUrl = BASE_URL . $imageValue;
-                        } else {
-                            $fullImageUrl = BASE_URL . '/uploads/products/' . basename($imageValue);
-                        }
-                      ?>
+                        <?php $fullImageUrl = ImageHelper::normalizeImagePath($product['image'] ?? '', 'products'); ?>
                       <img src="<?= htmlspecialchars($fullImageUrl) ?>" 
                            alt="<?= htmlspecialchars($product['name']) ?>" 
                            class="product-thumb"

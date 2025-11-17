@@ -105,16 +105,8 @@ if ($userDetails['role'] === 'farmer') {
             <div class="user-menu">
                 <span class="welcome">Welcome, <?= htmlspecialchars($user['username']) ?></span>
                 <?php
-                $profilePicPath = '';
-                if (!empty($user['profile_picture'])) {
-                    if (strpos($user['profile_picture'], BASE_URL . '/') === 0 || strpos($user['profile_picture'], '/FARMLINK/') === 0) {
-                        $profilePicPath = $user['profile_picture'];
-                    } elseif (strpos($user['profile_picture'], 'uploads/') === 0) {
-                        $profilePicPath = BASE_URL . '/' . $user['profile_picture'];
-                    } else {
-                        $profilePicPath = BASE_URL . '/uploads/profiles/' . basename($user['profile_picture']);
-                    }
-                } else {
+                $profilePicPath = ImageHelper::normalizeImagePath($user['profile_picture'] ?? '', 'profiles');
+                if (empty($profilePicPath)) {
                     $profilePicPath = BASE_URL . '/assets/img/default-avatar.png';
                 }
                 ?>
@@ -157,15 +149,9 @@ if ($userDetails['role'] === 'farmer') {
             <div class="user-profile">
                 <div class="profile-avatar">
                     <?php
-                    $userProfilePic = BASE_URL . '/assets/img/default-avatar.png';
-                    if (!empty($userDetails['profile_picture'])) {
-                        if (strpos($userDetails['profile_picture'], BASE_URL . '/') === 0 || strpos($userDetails['profile_picture'], '/FARMLINK/') === 0) {
-                            $userProfilePic = $userDetails['profile_picture'];
-                        } elseif (strpos($userDetails['profile_picture'], 'uploads/') === 0) {
-                            $userProfilePic = BASE_URL . '/' . $userDetails['profile_picture'];
-                        } else {
-                            $userProfilePic = BASE_URL . '/uploads/profiles/' . basename($userDetails['profile_picture']);
-                        }
+                    $userProfilePic = ImageHelper::normalizeImagePath($userDetails['profile_picture'] ?? '', 'profiles');
+                    if (empty($userProfilePic)) {
+                        $userProfilePic = BASE_URL . '/assets/img/default-avatar.png';
                     }
                     ?>
                     <img src="<?= $userProfilePic ?>" alt="Profile Picture" onerror="this.src='<?= BASE_URL ?>/assets/img/default-avatar.png'">

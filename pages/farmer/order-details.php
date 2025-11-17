@@ -6,6 +6,7 @@ $basePath = dirname(dirname(__DIR__));
 require $basePath . '/api/config.php';
 require $basePath . '/includes/session.php';
 require $basePath . '/includes/DatabaseHelper.php';
+require $basePath . '/includes/ImageHelper.php';
 
 // Require farmer role
 $user = SessionManager::requireRole('farmer');
@@ -232,20 +233,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                         <div class="buyer-avatar">
                             <?php if (!empty($order['buyer_profile_picture'])): ?>
                                 <?php 
-                                $profilePicPath = trim($order['buyer_profile_picture']);
-                                if (strpos($profilePicPath, 'http') === 0) {
-                                    // use as is
-                                } elseif (strpos($profilePicPath, BASE_URL . '/') === 0 || strpos($profilePicPath, '/FARMLINK/') === 0) {
-                                    // already base-prefixed
-                                } elseif (strpos($profilePicPath, 'uploads/') === 0) {
-                                    $profilePicPath = BASE_URL . '/' . $profilePicPath;
-                                } elseif (strpos($profilePicPath, '/') === 0) {
-                                    $profilePicPath = BASE_URL . $profilePicPath;
-                                } else {
-                                    $profilePicPath = BASE_URL . '/uploads/profiles/' . $profilePicPath;
+                                $profilePicPath = ImageHelper::normalizeImagePath($order['buyer_profile_picture'] ?? '', 'profiles');
+                                if (empty($profilePicPath)) {
+                                    $profilePicPath = BASE_URL . '/assets/img/default-avatar.png';
                                 }
+                                $profilePicPath = htmlspecialchars($profilePicPath);
                                 ?>
-                                <img src="<?= htmlspecialchars($profilePicPath) ?>" 
+                                <img src="<?= $profilePicPath ?>" 
                                      alt="Buyer Profile" 
                                      class="profile-pic"
                                      onerror="this.onerror=null; this.src='<?= BASE_URL ?>/assets/img/default-avatar.png';">

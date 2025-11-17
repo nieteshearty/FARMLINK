@@ -11,6 +11,7 @@ header('Access-Control-Allow-Methods: GET');
 // Set base path for includes
 $basePath = dirname(dirname(__DIR__));
 require $basePath . '/api/config.php';
+require $basePath . '/includes/ImageHelper.php';
 
 $productId = intval($_GET['product_id'] ?? 0);
 $farmerId = intval($_GET['farmer_id'] ?? 0);
@@ -105,21 +106,12 @@ try {
     // Format reviews
     $formattedReviews = array_map(function($review) {
         $base = defined('BASE_URL') ? BASE_URL : '';
-        $normalize = function($v, $type = 'profiles') use ($base) {
-            if (empty($v)) return '';
-            $v = trim($v);
-            if (strpos($v, 'http') === 0) return $v;
-            if (strpos($v, $base . '/') === 0 || strpos($v, '/FARMLINK/') === 0) return $v;
-            if (strpos($v, 'uploads/') === 0) return $base . '/' . $v;
-            if (strpos($v, '/') === 0) return $base . $v;
-            return $base . '/uploads/' . $type . '/' . basename($v);
-        };
 
         // Handle buyer avatar
-        $buyerAvatar = $normalize($review['buyer_avatar'] ?? '', 'profiles');
+        $buyerAvatar = ImageHelper::normalizeImagePath($review['buyer_avatar'] ?? '', 'profiles');
         
         // Handle product image
-        $productImage = $normalize($review['product_image'] ?? '', 'products');
+        $productImage = ImageHelper::normalizeImagePath($review['product_image'] ?? '', 'products');
         
         // Parse review images
         $reviewImages = [];

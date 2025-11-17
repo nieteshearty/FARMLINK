@@ -6,6 +6,7 @@ $basePath = dirname(dirname(__DIR__));  // Go up two levels to reach FARMLINK di
 require $basePath . '/api/config.php';
 require $basePath . '/includes/session.php';
 require $basePath . '/includes/DatabaseHelper.php';
+require $basePath . '/includes/ImageHelper.php';
 
 // Require buyer role
 $user = SessionManager::requireRole('buyer');
@@ -138,17 +139,10 @@ if ($selectedFarmerId) {
       <span class="brand">FARMLINK - BUYER</span>
     </div>
     <div class="nav-right">
-      <?php if ($user['profile_picture']): ?>
-        <?php 
-          // Handle different path formats for profile pictures
-          $profilePicPath = $user['profile_picture'];
-          
-          // If the path doesn't start with /, it's likely just a filename
-          if (!str_starts_with($profilePicPath, '/')) {
-            $profilePicPath = BASE_URL . '/uploads/profiles/' . $profilePicPath;
-          }
-          // Note: If it's already a full path starting with BASE_URL or /FARMLINK/, we keep it as is
-        ?>
+      <?php 
+        $profilePicPath = ImageHelper::normalizeImagePath($user['profile_picture'] ?? '', 'profiles');
+        if ($profilePicPath):
+      ?>
         <a href="buyer-profile.php"><img src="<?= htmlspecialchars($profilePicPath) ?>" alt="Profile" class="profile-pic"></a>
       <?php else: ?>
         <a href="buyer-profile.php" class="profile-pic-default">
@@ -324,29 +318,16 @@ if ($selectedFarmerId) {
           <?php else: ?>
             <?php foreach ($farmerProducts as $product): ?>
               <div class="market-card">
-                <?php if ($product['image']): ?>
+                <?php if (!empty($product['image'])): ?>
                   <div class="product-image">
                     <?php
-                      $imageUrl = '';
-                      $imagePath = trim($product['image']);
-                      
-                      if (strpos($imagePath, 'http') === 0) {
-                          $imageUrl = $imagePath;
-                      } elseif (strpos($imagePath, BASE_URL . '/') === 0 || strpos($imagePath, '/FARMLINK/') === 0) {
-                          $imageUrl = $imagePath;
-                      } elseif (strpos($imagePath, 'uploads/products/') === 0) {
-                          $imageUrl = BASE_URL . '/' . $imagePath;
-                      } elseif (strpos($imagePath, '/') === 0) {
-                          $imageUrl = BASE_URL . $imagePath;
-                      } else {
-                          $imageUrl = BASE_URL . '/uploads/products/' . basename($imagePath);
-                      }
+                      $imageUrl = ImageHelper::normalizeImagePath($product['image'], 'products');
                     ?>
-                    <img src="<?= htmlspecialchars($imageUrl) ?>" alt="<?= htmlspecialchars($product['name']) ?>" onerror="this.src='<?= BASE_URL ?>/assets/img/placeholder-product.png';">
+                    <img src="<?= htmlspecialchars($imageUrl) ?>" alt="<?= htmlspecialchars($product['name']) ?>" onerror="this.src='<?= BASE_URL ?>/assets/img/product-placeholder.svg';">
                   </div>
                 <?php else: ?>
                   <div class="product-image">
-                    <img src="<?= BASE_URL ?>/assets/img/placeholder-product.png" alt="<?= htmlspecialchars($product['name']) ?>">
+                    <img src="<?= BASE_URL ?>/assets/img/product-placeholder.svg" alt="<?= htmlspecialchars($product['name']) ?>">
                   </div>
                 <?php endif; ?>
                 <div class="product-info">
@@ -401,29 +382,14 @@ if ($selectedFarmerId) {
           <?php else: ?>
             <?php foreach ($recentProducts as $product): ?>
               <div class="market-card">
-                <?php if ($product['image']): ?>
+                <?php if (!empty($product['image'])): ?>
                   <div class="product-image">
-                    <?php
-                      $imageUrl = '';
-                      $imagePath = trim($product['image']);
-                      
-                      if (strpos($imagePath, 'http') === 0) {
-                          $imageUrl = $imagePath;
-                      } elseif (strpos($imagePath, BASE_URL . '/') === 0 || strpos($imagePath, '/FARMLINK/') === 0) {
-                          $imageUrl = $imagePath;
-                      } elseif (strpos($imagePath, 'uploads/products/') === 0) {
-                          $imageUrl = BASE_URL . '/' . $imagePath;
-                      } elseif (strpos($imagePath, '/') === 0) {
-                          $imageUrl = BASE_URL . $imagePath;
-                      } else {
-                          $imageUrl = BASE_URL . '/uploads/products/' . basename($imagePath);
-                      }
-                    ?>
-                    <img src="<?= htmlspecialchars($imageUrl) ?>" alt="<?= htmlspecialchars($product['name']) ?>" onerror="this.src='<?= BASE_URL ?>/assets/img/placeholder-product.png';">
+                    <?php $imageUrl = ImageHelper::normalizeImagePath($product['image'], 'products'); ?>
+                    <img src="<?= htmlspecialchars($imageUrl) ?>" alt="<?= htmlspecialchars($product['name']) ?>" onerror="this.src='<?= BASE_URL ?>/assets/img/product-placeholder.svg';">
                   </div>
                 <?php else: ?>
                   <div class="product-image">
-                    <img src="<?= BASE_URL ?>/assets/img/placeholder-product.png" alt="<?= htmlspecialchars($product['name']) ?>">
+                    <img src="<?= BASE_URL ?>/assets/img/product-placeholder.svg" alt="<?= htmlspecialchars($product['name']) ?>">
                   </div>
                 <?php endif; ?>
                 <div class="product-info">
@@ -2191,6 +2157,6 @@ if ($selectedFarmerId) {
     }
   </script>
 
-  <script src="/FARMLINK/assets/js/logout-confirmation.js"></script>
+  <script src="<?= BASE_URL ?>/assets/js/logout-confirmation.js"></script>
 </body>
 </html>

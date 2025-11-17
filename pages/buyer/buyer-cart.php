@@ -403,10 +403,14 @@ $finalTotal = $selectedSubtotal;
                   <img src="<?= htmlspecialchars($imagePath) ?>" 
                        alt="<?= htmlspecialchars($item['name']) ?>" 
                        class="item-thumbnail"
-                       onerror="this.onerror=null; this.style.display='none'; this.nextElementSibling.style.display='block';">
-                  <div class="item-thumbnail-placeholder" style="display:none;">📷</div>
+                       onerror="this.onerror=null; this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                  <div class="item-thumbnail-placeholder" style="display:none;">
+                    <img src="<?= BASE_URL ?>/assets/img/product-placeholder.svg" alt="Placeholder" class="item-placeholder-img">
+                  </div>
                 <?php else: ?>
-                  <div class="item-thumbnail-placeholder">📷</div>
+                  <div class="item-thumbnail-placeholder">
+                    <img src="<?= BASE_URL ?>/assets/img/product-placeholder.svg" alt="Placeholder" class="item-placeholder-img">
+                  </div>
                 <?php endif; ?>
               </div>
               
@@ -1913,7 +1917,7 @@ $finalTotal = $selectedSubtotal;
       border: 2px solid #4CAF50;
     }
   </style>
-  <script src="/FARMLINK/assets/js/logout-confirmation.js"></script>
+  <script src="<?= BASE_URL ?>/assets/js/logout-confirmation.js"></script>
   
   <script>
     // Toggle shipping details breakdown

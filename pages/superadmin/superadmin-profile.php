@@ -6,6 +6,7 @@ $basePath = dirname(dirname(__DIR__));
 require $basePath . '/api/config.php';
 require $basePath . '/includes/session.php';
 require $basePath . '/includes/DatabaseHelper.php';
+require $basePath . '/includes/ImageHelper.php';
 
 // Require super admin role
 $user = SessionManager::requireRole('superadmin');
@@ -111,16 +112,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <div class="user-menu">
                 <span class="welcome">Welcome, <?= htmlspecialchars($user['username']) ?></span>
                 <?php
-                $profilePicPath = '';
-                if (!empty($user['profile_picture'])) {
-                    if (strpos($user['profile_picture'], BASE_URL . '/') === 0 || strpos($user['profile_picture'], '/FARMLINK/') === 0) {
-                        $profilePicPath = $user['profile_picture'];
-                    } elseif (strpos($user['profile_picture'], 'uploads/') === 0) {
-                        $profilePicPath = BASE_URL . '/' . $user['profile_picture'];
-                    } else {
-                        $profilePicPath = BASE_URL . '/uploads/profiles/' . basename($user['profile_picture']);
-                    }
-                } else {
+                $profilePicPath = ImageHelper::normalizeImagePath($user['profile_picture'] ?? '', 'profiles');
+                if (empty($profilePicPath)) {
                     $profilePicPath = BASE_URL . '/assets/img/default-avatar.png';
                 }
                 ?>
@@ -157,18 +150,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <h3>Profile Picture</h3>
                 <div class="profile-upload">
                     <div class="current-profile">
-                        <?php if ($user['profile_picture']): ?>
-                            <?php 
-                                $profilePicPath = $user['profile_picture'];
-                                if (strpos($profilePicPath, 'http') === 0) {
-                                    // use as is
-                                } elseif (strpos($profilePicPath, '/') === 0) {
-                                    $profilePicPath = BASE_URL . $profilePicPath;
-                                } else {
-                                    $profilePicPath = BASE_URL . '/uploads/profiles/' . $profilePicPath;
-                                }
-                            ?>
-                            <img src="<?= htmlspecialchars($profilePicPath) ?>" alt="Profile Picture" onerror="this.src='<?= BASE_URL ?>/assets/img/default-avatar.png';" class="current-pic">
+                        <?php
+                            $currentProfilePic = ImageHelper::normalizeImagePath($user['profile_picture'] ?? '', 'profiles');
+                        ?>
+                        <?php if ($currentProfilePic): ?>
+                            <img src="<?= htmlspecialchars($currentProfilePic) ?>" alt="Profile Picture" onerror="this.src='<?= BASE_URL ?>/assets/img/default-avatar.png';" class="current-pic">
                         <?php else: ?>
                             <div class="profile-pic-default current-pic">
                                 <?= strtoupper(substr($user['username'], 0, 1)) ?>

@@ -6,6 +6,7 @@ $basePath = dirname(dirname(__DIR__));
 require $basePath . '/api/config.php';
 require $basePath . '/includes/session.php';
 require $basePath . '/includes/DatabaseHelper.php';
+require $basePath . '/includes/ImageHelper.php';
 
 // Require super admin role
 $user = SessionManager::requireRole('superadmin');
@@ -91,16 +92,8 @@ $systemMetrics = DatabaseHelper::getSystemMetrics();
             <div class="user-menu">
                 <span class="welcome">Welcome, <?= htmlspecialchars($user['username']) ?></span>
                 <?php
-                $profilePicPath = '';
-                if (!empty($user['profile_picture'])) {
-                    if (strpos($user['profile_picture'], BASE_URL . '/') === 0 || strpos($user['profile_picture'], '/FARMLINK/') === 0) {
-                        $profilePicPath = $user['profile_picture'];
-                    } elseif (strpos($user['profile_picture'], 'uploads/') === 0) {
-                        $profilePicPath = BASE_URL . '/' . $user['profile_picture'];
-                    } else {
-                        $profilePicPath = BASE_URL . '/uploads/profiles/' . basename($user['profile_picture']);
-                    }
-                } else {
+                $profilePicPath = ImageHelper::normalizeImagePath($user['profile_picture'] ?? '', 'profiles');
+                if (empty($profilePicPath)) {
                     $profilePicPath = BASE_URL . '/assets/img/default-avatar.png';
                 }
                 ?>
@@ -163,24 +156,10 @@ $systemMetrics = DatabaseHelper::getSystemMetrics();
                             <tr>
                                 <td>
                                     <div class="user-info">
-                                        <?php if ($activeUser['profile_picture']): ?>
-                                            <?php
-                                            // Robust profile picture path handling
-                                            $profileValue = trim($activeUser['profile_picture']);
-                                            $profileUrl = '';
-                                            
-                                            if (strpos($profileValue, 'http') === 0) {
-                                                $profileUrl = $profileValue;
-                                            } elseif (strpos($profileValue, BASE_URL . '/') === 0 || strpos($profileValue, '/FARMLINK/') === 0) {
-                                                $profileUrl = $profileValue;
-                                            } elseif (strpos($profileValue, 'uploads/profiles/') === 0) {
-                                                $profileUrl = BASE_URL . '/' . $profileValue;
-                                            } elseif (strpos($profileValue, '/') === 0) {
-                                                $profileUrl = BASE_URL . $profileValue;
-                                            } else {
-                                                $profileUrl = BASE_URL . '/uploads/profiles/' . basename($profileValue);
-                                            }
-                                            ?>
+                                        <?php
+                                            $profileUrl = ImageHelper::normalizeImagePath($activeUser['profile_picture'] ?? '', 'profiles');
+                                        ?>
+                                        <?php if ($profileUrl): ?>
                                             <img src="<?= htmlspecialchars($profileUrl) ?>" 
                                                  alt="Profile" class="user-thumb"
                                                  onerror="this.src='<?= BASE_URL ?>/assets/img/default-avatar.png';">

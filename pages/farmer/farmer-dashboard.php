@@ -6,6 +6,7 @@ $basePath = dirname(dirname(__DIR__));  // Go up two levels to reach FARMLINK di
 require $basePath . '/api/config.php';
 require $basePath . '/includes/session.php';
 require $basePath . '/includes/DatabaseHelper.php';
+require $basePath . '/includes/ImageHelper.php';
 
 // Require farmer role
 $user = SessionManager::requireRole('farmer');
@@ -31,22 +32,10 @@ $recentActivity = DatabaseHelper::getRecentActivity(5, $user['id']);
       <span class="brand">FARMLINK - FARMER</span>
     </div>
     <div class="nav-right">
-      <?php if ($user['profile_picture']): ?>
-        <?php 
-          // Handle different path formats for existing profile pictures
-          $profilePicPath = $user['profile_picture'];
-          
-          // If the path doesn't start with /, it's likely just a filename
-          if (strpos($profilePicPath, '/') !== 0) {
-            $profilePicPath = BASE_URL . '/uploads/profiles/' . $profilePicPath;
-          }
-          
-          // If it's already a full path starting with /FARMLINK/, use as is
-          // Otherwise, ensure it has the correct prefix
-          if (strpos($profilePicPath, BASE_URL . '/') !== 0 && strpos($profilePicPath, '/FARMLINK/') !== 0) {
-            $profilePicPath = BASE_URL . '/' . ltrim($profilePicPath, '/');
-          }
-        ?>
+      <?php
+        $profilePicPath = ImageHelper::normalizeImagePath($user['profile_picture'] ?? '', 'profiles');
+      ?>
+      <?php if (!empty($profilePicPath)): ?>
         <img src="<?= htmlspecialchars($profilePicPath) ?>" alt="Profile" class="profile-pic" onerror="this.src='<?= BASE_URL ?>/assets/img/default-avatar.png';">
       <?php else: ?>
         <div class="profile-pic-default">

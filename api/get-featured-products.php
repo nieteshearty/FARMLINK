@@ -15,6 +15,7 @@ $basePath = dirname(__DIR__);
 try {
     // Include required files
     require $basePath . '/api/config.php';
+    require $basePath . '/includes/ImageHelper.php';
     
     $pdo = getDBConnection();
     
@@ -46,51 +47,15 @@ try {
     // Process products for display
     $featuredProducts = [];
     foreach ($products as $product) {
-        // Handle image path
         $base = defined('BASE_URL') ? BASE_URL : '';
-        $imagePath = $base . '/assets/img/product-placeholder.svg'; // Default
-        if (!empty($product['image'])) {
-            $image = trim($product['image']);
-            
-            // Handle different image path formats
-            if (strpos($image, 'http') === 0) {
-                // Full URL
-                $imagePath = $image;
-            } elseif (strpos($image, $base . '/') === 0) {
-                // Already has BASE_URL prefix
-                $imagePath = $image;
-            } elseif (strpos($image, 'uploads/') === 0) {
-                // Relative path from project root
-                $imagePath = $base . '/' . $image;
-            } elseif (strpos($image, '/uploads/') === 0) {
-                // Absolute path from server root
-                $imagePath = $base . $image;
-            } elseif (preg_match('#^/[^/]+/(uploads/.*)$#', $image, $matches)) {
-                // Legacy prefix like /FOLDER/uploads/...
-                $imagePath = $base . '/' . $matches[1];
-            } else {
-                // Just filename, assume it's in products folder
-                $imagePath = $base . '/uploads/products/' . basename($image);
-            }
+        $imagePath = ImageHelper::normalizeImagePath($product['image'] ?? '', 'products');
+        if (empty($imagePath)) {
+            $imagePath = $base . '/assets/img/product-placeholder.svg';
         }
-        
-        // Normalize farmer avatar
-        $farmerImage = $base . '/assets/img/default-avatar.png';
-        if (!empty($product['farmer_image'])) {
-            $avatar = trim($product['farmer_image']);
-            if (strpos($avatar, 'http') === 0) {
-                $farmerImage = $avatar;
-            } elseif (strpos($avatar, $base . '/') === 0) {
-                $farmerImage = $avatar;
-            } elseif (strpos($avatar, 'uploads/') === 0) {
-                $farmerImage = $base . '/' . $avatar;
-            } elseif (strpos($avatar, '/uploads/') === 0) {
-                $farmerImage = $base . $avatar;
-            } elseif (preg_match('#^/[^/]+/(uploads/.*)$#', $avatar, $matchAvatar)) {
-                $farmerImage = $base . '/' . $matchAvatar[1];
-            } else {
-                $farmerImage = $base . '/uploads/profiles/' . basename($avatar);
-            }
+
+        $farmerImage = ImageHelper::normalizeImagePath($product['farmer_image'] ?? '', 'profiles');
+        if (empty($farmerImage)) {
+            $farmerImage = $base . '/assets/img/default-avatar.png';
         }
 
         // Determine category badge
@@ -177,7 +142,7 @@ try {
                 'category' => 'Grains',
                 'image_url' => 'https://images.unsplash.com/photo-1566478989037-eec170784d0b?w=400&h=300&fit=crop&auto=format',
                 'farmer_name' => 'Local Farmer',
-                'farmer_image' => '/FARMLINK/assets/img/default-avatar.png',
+                'farmer_image' => $base . '/assets/img/default-avatar.png',
                 'status' => 'active'
             ],
             [
@@ -190,7 +155,7 @@ try {
                 'category' => 'Fruits',
                 'image_url' => 'https://images.unsplash.com/photo-1571771894821-ce9b6c11b08e?w=400&h=300&fit=crop&auto=format',
                 'farmer_name' => 'Local Farmer',
-                'farmer_image' => '/FARMLINK/assets/img/default-avatar.png',
+                'farmer_image' => $base . '/assets/img/default-avatar.png',
                 'status' => 'active'
             ],
             [

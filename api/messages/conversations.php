@@ -12,6 +12,7 @@ header('Access-Control-Allow-Methods: GET');
 $basePath = dirname(dirname(__DIR__));
 require $basePath . '/api/config.php';
 require $basePath . '/includes/session.php';
+require $basePath . '/includes/ImageHelper.php';
 
 // Check if user is logged in
 if (!SessionManager::isLoggedIn()) {
@@ -87,22 +88,7 @@ try {
     // Format conversations
     $formattedConversations = array_map(function($conv) {
         $base = defined('BASE_URL') ? BASE_URL : '';
-        // Handle avatar path
-        $avatar = $conv['other_avatar'];
-        if ($avatar) {
-            $v = trim($avatar);
-            if (strpos($v, 'http') === 0) {
-                $avatar = $v;
-            } elseif (strpos($v, $base . '/') === 0 || strpos($v, '/FARMLINK/') === 0) {
-                $avatar = $v;
-            } elseif (strpos($v, 'uploads/') === 0) {
-                $avatar = $base . '/' . $v;
-            } elseif (strpos($v, '/') === 0) {
-                $avatar = $base . $v;
-            } else {
-                $avatar = $base . '/uploads/profiles/' . basename($v);
-            }
-        }
+        $avatar = ImageHelper::normalizeImagePath($conv['other_avatar'] ?? '', 'profiles');
         
         // Format last message preview
         $lastMessagePreview = '';

@@ -32,7 +32,8 @@ header("Cache-Control: post-check=0, pre-check=0", false);
 header("Pragma: no-cache");
 
 // Redirect to login page with a success message
-header("Location: /FARMLINK/pages/auth/login.php?logout=success");
+$base = defined('BASE_URL') ? BASE_URL : '';
+header('Location: ' . $base . '/pages/auth/login.php?logout=success');
 
 // Ensure no further code is executed
 exit();
