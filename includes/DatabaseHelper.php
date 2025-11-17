@@ -230,24 +230,46 @@ class DatabaseHelper {
     
     public static function getCart($buyerId) {
         $pdo = getDBConnection();
-        $stmt = $pdo->prepare("
-            SELECT c.*, p.name, p.price, p.unit, p.image, p.category, p.farmer_id,
-                   p.expires_at, p.created_at as product_created_at,
-                   u.username as farmer_name, u.farm_name,
-                   CASE 
-                       WHEN p.expires_at IS NULL THEN DATE_ADD(p.created_at, INTERVAL 3 DAY)
-                       ELSE p.expires_at 
-                   END as calculated_expires_at,
-                   CASE 
-                       WHEN p.expires_at IS NULL THEN (DATE_ADD(p.created_at, INTERVAL 3 DAY) < NOW())
-                       ELSE (p.expires_at < NOW()) 
-                   END as is_product_expired
-            FROM cart c
-            JOIN products p ON c.product_id = p.id
-            JOIN users u ON p.farmer_id = u.id
-            WHERE c.buyer_id = ?
-            ORDER BY c.created_at DESC
-        ");
+
+        static $productsHasExpiresAt = null;
+        if ($productsHasExpiresAt === null) {
+            try {
+                $columnCheck = $pdo->query("SHOW COLUMNS FROM products LIKE 'expires_at'");
+                $productsHasExpiresAt = $columnCheck && $columnCheck->fetch() ? true : false;
+            } catch (Exception $e) {
+                $productsHasExpiresAt = false;
+            }
+        }
+
+        if ($productsHasExpiresAt) {
+            $query = "
+                SELECT c.*, p.name, p.price, p.unit, p.image, p.category, p.farmer_id,
+                       p.expires_at, p.created_at as product_created_at,
+                       COALESCE(p.expires_at, DATE_ADD(p.created_at, INTERVAL 3 DAY)) as calculated_expires_at,
+                       (COALESCE(p.expires_at, DATE_ADD(p.created_at, INTERVAL 3 DAY)) < NOW()) as is_product_expired,
+                       u.username as farmer_name, u.farm_name
+                FROM cart c
+                JOIN products p ON c.product_id = p.id
+                JOIN users u ON p.farmer_id = u.id
+                WHERE c.buyer_id = ?
+                ORDER BY c.created_at DESC
+            ";
+        } else {
+            $query = "
+                SELECT c.*, p.name, p.price, p.unit, p.image, p.category, p.farmer_id,
+                       NULL as expires_at, p.created_at as product_created_at,
+                       DATE_ADD(p.created_at, INTERVAL 3 DAY) as calculated_expires_at,
+                       (DATE_ADD(p.created_at, INTERVAL 3 DAY) < NOW()) as is_product_expired,
+                       u.username as farmer_name, u.farm_name
+                FROM cart c
+                JOIN products p ON c.product_id = p.id
+                JOIN users u ON p.farmer_id = u.id
+                WHERE c.buyer_id = ?
+                ORDER BY c.created_at DESC
+            ";
+        }
+
+        $stmt = $pdo->prepare($query);
         $stmt->execute([$buyerId]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
