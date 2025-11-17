@@ -6,6 +6,7 @@ $basePath = dirname(dirname(__DIR__));  // Go up two levels to reach FARMLINK di
 require $basePath . '/api/config.php';
 require $basePath . '/includes/session.php';
 require $basePath . '/includes/DatabaseHelper.php';
+require $basePath . '/includes/ImageHelper.php';
 
 // Require buyer role
 $user = SessionManager::requireRole('buyer');
@@ -397,32 +398,7 @@ $finalTotal = $selectedSubtotal;
               </div>
               
               <div class="item-image">
-                      <?php 
-                      // Robust image path handling
-                      $imagePath = '';
-                      
-                      if (!empty($item['image'])) {
-                          $imageValue = trim($item['image']);
-                          
-                          // Handle different path formats stored in database
-                          if (strpos($imageValue, 'http') === 0) {
-                              // Full URL - use as is
-                              $imagePath = $imageValue;
-                          } elseif (strpos($imageValue, BASE_URL . '/') === 0 || strpos($imageValue, '/FARMLINK/') === 0) {
-                              // Already has site prefix - use as is
-                              $imagePath = $imageValue;
-                          } elseif (strpos($imageValue, 'uploads/products/') === 0) {
-                              // Relative path starting with uploads/products/
-                              $imagePath = BASE_URL . '/' . $imageValue;
-                          } elseif (strpos($imageValue, '/') === 0) {
-                              // Starts with /
-                              $imagePath = BASE_URL . $imageValue;
-                          } else {
-                              // Just filename - add full path
-                              $imagePath = BASE_URL . '/uploads/products/' . basename($imageValue);
-                          }
-                      }
-                      ?>
+                      <?php $imagePath = ImageHelper::normalizeImagePath($item['image'] ?? '', 'products'); ?>
                 <?php if (!empty($imagePath)): ?>
                   <img src="<?= htmlspecialchars($imagePath) ?>" 
                        alt="<?= htmlspecialchars($item['name']) ?>" 
