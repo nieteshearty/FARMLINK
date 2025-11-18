@@ -1,5 +1,28 @@
 <?php
 class DatabaseHelper {
+
+    private static array $columnCache = [];
+
+    public static function tableHasColumn(string $table, string $column): bool {
+        $cacheKey = strtolower($table . ':' . $column);
+        if (array_key_exists($cacheKey, self::$columnCache)) {
+            return self::$columnCache[$cacheKey];
+        }
+
+        $pdo = getDBConnection();
+
+        try {
+            $normalizedTable = preg_replace('/[^a-z0-9_]/i', '', $table);
+            $stmt = $pdo->prepare("SHOW COLUMNS FROM `{$normalizedTable}` LIKE ?");
+            $stmt->execute([$column]);
+            $hasColumn = $stmt->fetch() ? true : false;
+        } catch (Exception $e) {
+            $hasColumn = false;
+        }
+
+        self::$columnCache[$cacheKey] = $hasColumn;
+        return $hasColumn;
+    }
     
     public static function getStats($role = null, $userId = null) {
         $pdo = getDBConnection();
@@ -231,15 +254,7 @@ class DatabaseHelper {
     public static function getCart($buyerId) {
         $pdo = getDBConnection();
 
-        static $productsHasExpiresAt = null;
-        if ($productsHasExpiresAt === null) {
-            try {
-                $columnCheck = $pdo->query("SHOW COLUMNS FROM products LIKE 'expires_at'");
-                $productsHasExpiresAt = $columnCheck && $columnCheck->fetch() ? true : false;
-            } catch (Exception $e) {
-                $productsHasExpiresAt = false;
-            }
-        }
+        $productsHasExpiresAt = self::tableHasColumn('products', 'expires_at');
 
         if ($productsHasExpiresAt) {
             $query = "

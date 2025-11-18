@@ -11,6 +11,8 @@ require $basePath . '/includes/ImageHelper.php';
 // Require farmer role
 $user = SessionManager::requireRole('farmer');
 
+$supportsExpiry = DatabaseHelper::tableHasColumn('products', 'expires_at');
+
 // Handle product operations
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $action = $_POST['action'] ?? '';
@@ -44,17 +46,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 }
             }
             
-            if (empty($name) || $quantity <= 0 || $price <= 0 || empty($expiresAt)) {
-                $_SESSION['error'] = "Please fill all required fields correctly, including expiration date.";
+            if (empty($name) || $quantity <= 0 || $price <= 0 || ($supportsExpiry && empty($expiresAt))) {
+                $_SESSION['error'] = $supportsExpiry
+                    ? "Please fill all required fields correctly, including expiration date."
+                    : "Please fill all required fields correctly.";
             } else {
-                // Convert datetime-local format to MySQL datetime
-                $expiresAtFormatted = date('Y-m-d H:i:s', strtotime($expiresAt));
-                
-                $stmt = $pdo->prepare("INSERT INTO products (farmer_id, name, category, quantity, price, unit, description, image, expires_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
-                $stmt->execute([$user['id'], $name, $category, $quantity, $price, $unit, $description, $productImage, $expiresAtFormatted]);
-                
-                $expiryDate = date('M j, Y g:i A', strtotime($expiresAtFormatted));
-                $_SESSION['success'] = "Product added successfully! Expires on {$expiryDate}";
+                $expiresAtFormatted = ($supportsExpiry && !empty($expiresAt))
+                    ? date('Y-m-d H:i:s', strtotime($expiresAt))
+                    : null;
+
+                if ($supportsExpiry) {
+                    $stmt = $pdo->prepare("INSERT INTO products (farmer_id, name, category, quantity, price, unit, description, image, expires_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+                    $stmt->execute([$user['id'], $name, $category, $quantity, $price, $unit, $description, $productImage, $expiresAtFormatted]);
+                } else {
+                    $stmt = $pdo->prepare("INSERT INTO products (farmer_id, name, category, quantity, price, unit, description, image) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+                    $stmt->execute([$user['id'], $name, $category, $quantity, $price, $unit, $description, $productImage]);
+                }
+
+                if ($supportsExpiry && $expiresAtFormatted) {
+                    $expiryDate = date('M j, Y g:i A', strtotime($expiresAtFormatted));
+                    $_SESSION['success'] = "Product added successfully! Expires on {$expiryDate}";
+                } else {
+                    $_SESSION['success'] = "Product added successfully!";
+                }
                 SessionManager::logActivity($user['id'], 'product', "Added new product: {$name}");
             }
             
@@ -103,18 +117,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 }
             }
             
-            if (empty($name) || $quantity <= 0 || $price <= 0 || empty($expiresAt)) {
-                $_SESSION['error'] = "Please fill all required fields correctly, including expiration date.";
+            if (empty($name) || $quantity <= 0 || $price <= 0 || ($supportsExpiry && empty($expiresAt))) {
+                $_SESSION['error'] = $supportsExpiry
+                    ? "Please fill all required fields correctly, including expiration date."
+                    : "Please fill all required fields correctly.";
             } else {
-                // Convert datetime-local format to MySQL datetime
-                $expiresAtFormatted = date('Y-m-d H:i:s', strtotime($expiresAt));
-                
-                $stmt = $pdo->prepare("UPDATE products SET name = ?, category = ?, quantity = ?, price = ?, unit = ?, description = ?, image = ?, expires_at = ? WHERE id = ? AND farmer_id = ?");
-                $stmt->execute([$name, $category, $quantity, $price, $unit, $description, $productImage, $expiresAtFormatted, $productId, $user['id']]);
-                
+                $expiresAtFormatted = ($supportsExpiry && !empty($expiresAt))
+                    ? date('Y-m-d H:i:s', strtotime($expiresAt))
+                    : null;
+
+                if ($supportsExpiry) {
+                    $stmt = $pdo->prepare("UPDATE products SET name = ?, category = ?, quantity = ?, price = ?, unit = ?, description = ?, image = ?, expires_at = ? WHERE id = ? AND farmer_id = ?");
+                    $stmt->execute([$name, $category, $quantity, $price, $unit, $description, $productImage, $expiresAtFormatted, $productId, $user['id']]);
+                } else {
+                    $stmt = $pdo->prepare("UPDATE products SET name = ?, category = ?, quantity = ?, price = ?, unit = ?, description = ?, image = ? WHERE id = ? AND farmer_id = ?");
+                    $stmt->execute([$name, $category, $quantity, $price, $unit, $description, $productImage, $productId, $user['id']]);
+                }
+
                 if ($stmt->rowCount() > 0) {
-                    $expiryDate = date('M j, Y g:i A', strtotime($expiresAtFormatted));
-                    $_SESSION['success'] = "Product updated successfully! Expires on {$expiryDate}";
+                    if ($supportsExpiry && $expiresAtFormatted) {
+                        $expiryDate = date('M j, Y g:i A', strtotime($expiresAtFormatted));
+                        $_SESSION['success'] = "Product updated successfully! Expires on {$expiryDate}";
+                    } else {
+                        $_SESSION['success'] = "Product updated successfully!";
+                    }
                     SessionManager::logActivity($user['id'], 'product', "Updated product: {$name}");
                 } else {
                     $_SESSION['error'] = "Product not found or no changes made.";
@@ -250,17 +276,19 @@ if (isset($_GET['edit']) && $_GET['edit']) {
         
         <textarea name="description" placeholder="Description (optional)"><?= $editingProduct['description'] ?? '' ?></textarea>
         
+        <?php if ($supportsExpiry): ?>
         <!-- Expiration Date Field -->
         <div class="expiration-field">
           <label for="expires_at">Expiration Date & Time</label>
           <input type="datetime-local" 
                  name="expires_at" 
                  id="expires_at" 
-                 value="<?= $editingProduct && $editingProduct['expires_at'] ? date('Y-m-d\TH:i', strtotime($editingProduct['expires_at'])) : date('Y-m-d\TH:i', strtotime('+3 days')) ?>"
+                 value="<?= $editingProduct && !empty($editingProduct['expires_at']) ? date('Y-m-d\TH:i', strtotime($editingProduct['expires_at'])) : date('Y-m-d\TH:i', strtotime('+3 days')) ?>"
                  min="<?= date('Y-m-d\TH:i') ?>"
                  required />
           <small class="field-help">Set when this product will expire and become unavailable</small>
         </div>
+        <?php endif; ?>
         
         <input name="image" placeholder="Image URL (optional)" value="<?= $editingProduct['image'] ?? '' ?>" />
         
@@ -321,7 +349,7 @@ if (isset($_GET['edit']) && $_GET['edit']) {
                 <td><?= $product['quantity'] ?> <?= htmlspecialchars($product['unit']) ?></td>
                 <td>₱<?= number_format($product['price'], 2) ?></td>
                 <td>
-                  <?php if ($product['expires_at']): ?>
+                  <?php if ($supportsExpiry && !empty($product['expires_at'] ?? null)): ?>
                     <?php 
                     $expiryDate = new DateTime($product['expires_at']);
                     $now = new DateTime();
