@@ -13,9 +13,14 @@ class DatabaseHelper {
 
         try {
             $normalizedTable = preg_replace('/[^a-z0-9_]/i', '', $table);
-            $stmt = $pdo->prepare("SHOW COLUMNS FROM `{$normalizedTable}` LIKE ?");
-            $stmt->execute([$column]);
-            $hasColumn = $stmt->fetch() ? true : false;
+            $normalizedColumn = preg_replace('/[^a-z0-9_]/i', '', $column);
+            if ($normalizedTable === '' || $normalizedColumn === '') {
+                throw new InvalidArgumentException('Invalid table or column name.');
+            }
+
+            $sql = sprintf("SHOW COLUMNS FROM `%s` LIKE '%s'", $normalizedTable, $normalizedColumn);
+            $stmt = $pdo->query($sql);
+            $hasColumn = $stmt && $stmt->fetch() ? true : false;
         } catch (Exception $e) {
             $hasColumn = false;
         }
