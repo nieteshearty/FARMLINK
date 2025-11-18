@@ -1,32 +1,42 @@
 <?php
 class DatabaseHelper {
 
-    private static array $columnCache = [];
+    private static array $tableColumnsCache = [];
 
-    public static function tableHasColumn(string $table, string $column): bool {
-        $cacheKey = strtolower($table . ':' . $column);
-        if (array_key_exists($cacheKey, self::$columnCache)) {
-            return self::$columnCache[$cacheKey];
+    public static function getTableColumns(string $table): array {
+        $cacheKey = strtolower($table);
+        if (isset(self::$tableColumnsCache[$cacheKey])) {
+            return self::$tableColumnsCache[$cacheKey];
         }
 
         $pdo = getDBConnection();
 
         try {
             $normalizedTable = preg_replace('/[^a-z0-9_]/i', '', $table);
-            $normalizedColumn = preg_replace('/[^a-z0-9_]/i', '', $column);
-            if ($normalizedTable === '' || $normalizedColumn === '') {
-                throw new InvalidArgumentException('Invalid table or column name.');
+            if ($normalizedTable === '') {
+                throw new InvalidArgumentException('Invalid table name.');
             }
 
-            $sql = sprintf("SHOW COLUMNS FROM `%s` LIKE '%s'", $normalizedTable, $normalizedColumn);
+            $sql = sprintf("SHOW COLUMNS FROM `%s`", $normalizedTable);
             $stmt = $pdo->query($sql);
-            $hasColumn = $stmt && $stmt->fetch() ? true : false;
+            $columns = [];
+
+            if ($stmt) {
+                foreach ($stmt->fetchAll(PDO::FETCH_COLUMN) as $columnName) {
+                    $columns[strtolower($columnName)] = true;
+                }
+            }
         } catch (Exception $e) {
-            $hasColumn = false;
+            $columns = [];
         }
 
-        self::$columnCache[$cacheKey] = $hasColumn;
-        return $hasColumn;
+        self::$tableColumnsCache[$cacheKey] = $columns;
+        return $columns;
+    }
+
+    public static function tableHasColumn(string $table, string $column): bool {
+        $columns = self::getTableColumns($table);
+        return isset($columns[strtolower($column)]);
     }
     
     public static function getStats($role = null, $userId = null) {
