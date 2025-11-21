@@ -749,18 +749,32 @@ if (SessionManager::isLoggedIn()) {
                     
                     if (!empty($products)) {
                         foreach ($products as $product) {
-                            // Handle image path
+                            // Handle image path (robust, supports multiple formats)
                             $imagePath = BASE_URL . '/assets/img/product-placeholder.svg';
                             if (!empty($product['image'])) {
-                                $image = $product['image'];
-                                if (strpos($image, '/uploads/') === 0) {
-                                    $imagePath = BASE_URL . $image;
-                                } elseif (strpos($image, 'uploads/') === 0) {
-                                    $imagePath = BASE_URL . '/' . $image;
-                                } elseif (strpos($image, '/FARMLINK/') === 0) {
-                                    $imagePath = str_replace('/FARMLINK', BASE_URL, $image);
+                                $imageValue = trim($product['image']);
+
+                                if (strpos($imageValue, 'http') === 0) {
+                                    // Full URL
+                                    $imagePath = $imageValue;
+                                } elseif (strpos($imageValue, BASE_URL . '/') === 0) {
+                                    // Already prefixed with BASE_URL
+                                    $imagePath = $imageValue;
+                                } elseif (strpos($imageValue, '/FARMLINK/') === 0) {
+                                    // Old hardcoded path, normalize to BASE_URL
+                                    $imagePath = str_replace('/FARMLINK', BASE_URL, $imageValue);
+                                } elseif (strpos($imageValue, 'uploads/products/') === 0) {
+                                    // Relative uploads/products path
+                                    $imagePath = BASE_URL . '/' . $imageValue;
+                                } elseif (strpos($imageValue, 'uploads/') === 0) {
+                                    // Generic uploads path
+                                    $imagePath = BASE_URL . '/' . $imageValue;
+                                } elseif (strpos($imageValue, '/') === 0) {
+                                    // Starts with / but no prefix
+                                    $imagePath = BASE_URL . $imageValue;
                                 } else {
-                                    $imagePath = BASE_URL . '/uploads/products/' . $image;
+                                    // Just filename
+                                    $imagePath = BASE_URL . '/uploads/products/' . basename($imageValue);
                                 }
                             }
                             
