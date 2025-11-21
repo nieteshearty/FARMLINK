@@ -753,12 +753,12 @@ if (SessionManager::isLoggedIn()) {
                             $imagePath = BASE_URL . '/assets/img/product-placeholder.svg';
                             if (!empty($product['image'])) {
                                 $image = $product['image'];
-                                if (preg_match('#^https?://#', $image)) {
-                                    $imagePath = $image;
-                                } elseif (strpos($image, '/') === 0) {
+                                if (strpos($image, '/uploads/') === 0) {
                                     $imagePath = BASE_URL . $image;
                                 } elseif (strpos($image, 'uploads/') === 0) {
                                     $imagePath = BASE_URL . '/' . $image;
+                                } elseif (strpos($image, '/FARMLINK/') === 0) {
+                                    $imagePath = str_replace('/FARMLINK', BASE_URL, $image);
                                 } else {
                                     $imagePath = BASE_URL . '/uploads/products/' . $image;
                                 }

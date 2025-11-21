@@ -3,9 +3,9 @@ class DatabaseHelper {
 
     private static array $tableColumnsCache = [];
 
-    public static function getTableColumns(string $table): array {
+    public static function getTableColumns(string $table): ?array {
         $cacheKey = strtolower($table);
-        if (isset(self::$tableColumnsCache[$cacheKey])) {
+        if (array_key_exists($cacheKey, self::$tableColumnsCache)) {
             return self::$tableColumnsCache[$cacheKey];
         }
 
@@ -27,7 +27,7 @@ class DatabaseHelper {
                 }
             }
         } catch (Exception $e) {
-            $columns = [];
+            $columns = null; // Unknown (likely permission issue); assume column may exist.
         }
 
         self::$tableColumnsCache[$cacheKey] = $columns;
@@ -36,7 +36,30 @@ class DatabaseHelper {
 
     public static function tableHasColumn(string $table, string $column): bool {
         $columns = self::getTableColumns($table);
+        if ($columns === null) {
+            return true; // Assume present when schema introspection is unavailable.
+        }
         return isset($columns[strtolower($column)]);
+    }
+
+    private static function markColumnMissing(string $table, string $column): void {
+        $cacheKey = strtolower($table);
+        $columns = self::$tableColumnsCache[$cacheKey] ?? [];
+        if ($columns === null) {
+            $columns = [];
+        }
+        unset($columns[strtolower($column)]);
+        self::$tableColumnsCache[$cacheKey] = $columns;
+    }
+
+    private static function isUnknownColumnError(PDOException $exception, string $column): bool {
+        $message = $exception->getMessage();
+        if (stripos($message, 'Unknown column') === false) {
+            return false;
+        }
+
+        $columnPattern = preg_quote($column, '/');
+        return (bool) preg_match("/Unknown column '([^']*\.)?{$columnPattern}'/i", $message);
     }
     
     public static function getStats($role = null, $userId = null) {
@@ -299,9 +322,34 @@ class DatabaseHelper {
             ";
         }
 
-        $stmt = $pdo->prepare($query);
-        $stmt->execute([$buyerId]);
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        try {
+            $stmt = $pdo->prepare($query);
+            $stmt->execute([$buyerId]);
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            if ($productsHasExpiresAt && self::isUnknownColumnError($e, 'expires_at')) {
+                self::markColumnMissing('products', 'expires_at');
+
+                $fallbackQuery = "
+                    SELECT c.*, p.name, p.price, p.unit, p.image, p.category, p.farmer_id,
+                           NULL as expires_at, p.created_at as product_created_at,
+                           DATE_ADD(p.created_at, INTERVAL 3 DAY) as calculated_expires_at,
+                           (DATE_ADD(p.created_at, INTERVAL 3 DAY) < NOW()) as is_product_expired,
+                           u.username as farmer_name, u.farm_name
+                    FROM cart c
+                    JOIN products p ON c.product_id = p.id
+                    JOIN users u ON p.farmer_id = u.id
+                    WHERE c.buyer_id = ?
+                    ORDER BY c.created_at DESC
+                ";
+
+                $retry = $pdo->prepare($fallbackQuery);
+                $retry->execute([$buyerId]);
+                return $retry->fetchAll(PDO::FETCH_ASSOC);
+            }
+
+            throw $e;
+        }
     }
 }
 ?>

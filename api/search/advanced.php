@@ -196,7 +196,8 @@ try {
             if (empty($v)) return '';
             $v = trim($v);
             if (strpos($v, 'http') === 0) return $v;
-            if (strpos($v, $base . '/') === 0 || strpos($v, '/FARMLINK/') === 0) return $v;
+            if (strpos($v, $base . '/') === 0) return $v;
+            if (strpos($v, '/FARMLINK/') === 0) return str_replace('/FARMLINK', $base, $v);
             if (strpos($v, 'uploads/') === 0) return $base . '/' . $v;
             if (strpos($v, '/') === 0) return $base . $v;
             return $base . '/uploads/' . $type . '/' . basename($v);
