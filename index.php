@@ -561,6 +561,7 @@ if (SessionManager::isLoggedIn()) {
                 <span class="brand-name">FARMLINK</span>
             </div>
             <ul class="nav-links">
+                <li><a href="https://youtu.be/teq8oSNWQm8?si=iU7AHy4BQFHgSiby" target="_blank" rel="noopener noreferrer">ABOUT</a></li>
                 <li><a href="#home">HOME</a></li>
                 <li><a href="#features">FEATURES</a></li>
                 <li><a href="#products">PRODUCTS</a></li>
@@ -632,6 +633,23 @@ if (SessionManager::isLoggedIn()) {
                         <strong>Full Registration:</strong> Create your FARMLINK account
                     </p>
                 </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section class="features" id="about">
+        <div class="features-container">
+            <h2>About FARMLINK</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <p>
+                        FARMLINK is a digital marketplace that connects local farmers directly with buyers, helping to
+                        reduce middlemen, improve transparency, and support sustainable agriculture. Through this
+                        platform, farmers can showcase their products while buyers enjoy convenient access to fresh,
+                        locally sourced produce.
+                    </p>
+                </div>
             </div>
         </div>
     </section>
@@ -749,32 +767,18 @@ if (SessionManager::isLoggedIn()) {
                     
                     if (!empty($products)) {
                         foreach ($products as $product) {
-                            // Handle image path (robust, supports multiple formats)
+                            // Handle image path
                             $imagePath = BASE_URL . '/assets/img/product-placeholder.svg';
                             if (!empty($product['image'])) {
-                                $imageValue = trim($product['image']);
-
-                                if (strpos($imageValue, 'http') === 0) {
-                                    // Full URL
-                                    $imagePath = $imageValue;
-                                } elseif (strpos($imageValue, BASE_URL . '/') === 0) {
-                                    // Already prefixed with BASE_URL
-                                    $imagePath = $imageValue;
-                                } elseif (strpos($imageValue, '/FARMLINK/') === 0) {
-                                    // Old hardcoded path, normalize to BASE_URL
-                                    $imagePath = str_replace('/FARMLINK', BASE_URL, $imageValue);
-                                } elseif (strpos($imageValue, 'uploads/products/') === 0) {
-                                    // Relative uploads/products path
-                                    $imagePath = BASE_URL . '/' . $imageValue;
-                                } elseif (strpos($imageValue, 'uploads/') === 0) {
-                                    // Generic uploads path
-                                    $imagePath = BASE_URL . '/' . $imageValue;
-                                } elseif (strpos($imageValue, '/') === 0) {
-                                    // Starts with / but no prefix
-                                    $imagePath = BASE_URL . $imageValue;
+                                $image = $product['image'];
+                                if (preg_match('#^https?://#', $image)) {
+                                    $imagePath = $image;
+                                } elseif (strpos($image, '/') === 0) {
+                                    $imagePath = BASE_URL . $image;
+                                } elseif (strpos($image, 'uploads/') === 0) {
+                                    $imagePath = BASE_URL . '/' . $image;
                                 } else {
-                                    // Just filename
-                                    $imagePath = BASE_URL . '/uploads/products/' . basename($imageValue);
+                                    $imagePath = BASE_URL . '/uploads/products/' . $image;
                                 }
                             }
                             
